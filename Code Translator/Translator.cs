@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using MindustryLogics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -15,6 +16,7 @@ namespace Code_Translator
         readonly SyntaxTree syntaxTree;
         readonly CompilationUnitSyntax treeRoot;
         readonly SemanticModel semanticModel;
+        readonly CSharpCompilation compilation;
 
         readonly CommandBuilder output;
         readonly Dictionary<IMethodSymbol, int> methodStartPos;
@@ -31,10 +33,11 @@ namespace Code_Translator
         {
             syntaxTree = CSharpSyntaxTree.ParseText(source);
             treeRoot = syntaxTree.GetCompilationUnitRoot();
-            var compilation = CSharpCompilation.Create("Assem")
+            compilation = CSharpCompilation.Create("Assem")
                 .AddReferences(MetadataReference.CreateFromFile(typeof(object).Assembly.Location))
                 .AddReferences(MetadataReference.CreateFromFile(typeof(Mindustry).Assembly.Location))
-                .AddSyntaxTrees(syntaxTree);
+                .AddSyntaxTrees(syntaxTree)
+                .WithOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
             var refs = Assembly.GetAssembly(typeof(Mindustry)).GetReferencedAssemblies();
             compilation = compilation.AddReferences(refs.Select(n => MetadataReference.CreateFromFile(Assembly.Load(n).Location)));
@@ -47,7 +50,26 @@ namespace Code_Translator
             recursionChecker = new RecursionChecker();
         }
 
-        public string Compile()
+        public bool CheckCodeValidity()
+        {
+            var dg = compilation.GetDiagnostics();
+            bool returns = true;
+            foreach (Diagnostic d in dg)
+            {
+                if (d.Severity != DiagnosticSeverity.Error)
+                    continue;
+
+                if (returns)
+                {
+                    Console.WriteLine("\nThe following compile error occured:");
+                    returns = false;
+                }
+                Console.WriteLine(d.GetMessage());
+            }
+            return returns;
+        }
+
+        public string Translate()
         {
             output.Clear();
             methodStartPos.Clear();

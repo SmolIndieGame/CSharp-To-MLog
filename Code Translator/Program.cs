@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
-using System.Windows.Forms;
 
 namespace Code_Translator
 {
@@ -49,36 +50,45 @@ namespace Code_Translator
 #if DEBUG
                 string source = File.ReadAllText(Path.GetFullPath(@"..\..\..\..\MindustryLogics\Test.cs"));
 #else
-                Console.WriteLine("Select a file you want to compile...");
-                string source = GetFile(Path.GetFullPath(@"..\..\..\"));
+                Console.WriteLine("Drop the .cs file that you want to compile to this window and then press enter.");
+                string s = Console.ReadLine().Trim('"');
+                string source = File.ReadAllText(s);
 #endif
                 Console.WriteLine("Original Code:");
                 Console.WriteLine(source);
                 Console.WriteLine();
                 Console.Write("Analysing syntax...");
-                Translator compiler = new Translator(source);
+                Translator translator = new Translator(source);
                 Console.WriteLine("finished.");
-                Console.Write("Compiling...");
-                string compiled = compiler.Compile();
+                Console.Write("Checking code validity...");
+                if (!translator.CheckCodeValidity())
+                    throw new OperationCanceledException();
                 Console.WriteLine("finished.");
-                Console.WriteLine("Compiled Code:");
+                Console.Write("Translating...");
+                string translated = translator.Translate();
+                Console.WriteLine("finished.");
+                Console.WriteLine("Translated Code:");
                 StringBuilder builder = new StringBuilder();
                 int i = 0;
-                foreach (var line in compiled.AsSpan().EnumerateLines())
+                foreach (var line in translated.AsSpan().EnumerateLines())
                 {
                     if (line.IsWhiteSpace()) continue;
-                    builder.Append($"{i, 4}: ");
+                    builder.Append($"{i,4}: ");
                     builder.Append(line);
                     builder.AppendLine();
                     i++;
                 }
                 Console.Write(builder);
-                Clipboard.SetText(compiled);
-                Console.WriteLine("Code copied to clipboard.");
+
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    SetClipboard(translated);
+                    Console.WriteLine("Code copied to clipboard.");
+                }
             }
             catch (OperationCanceledException)
             {
-                Console.WriteLine("File selection canceled.");
+                Console.WriteLine("Operation canceled.");
             }
             catch (CompilationException e)
             {
@@ -89,12 +99,16 @@ namespace Code_Translator
                 Console.WriteLine(e.Message);
 #endif
             }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
 
             Console.Write("Press any key to exit...");
             Console.ReadKey();
         }
 
-        private static string GetFile(string initPath)
+        /*private static string GetFile(string initPath)
         {
             using OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.InitialDirectory = initPath;
@@ -109,6 +123,46 @@ namespace Code_Translator
             }
 
             throw new OperationCanceledException();
+        }*/
+
+        public static void SetClipboard(string value)
+        {
+            if (value == null)
+                throw new ArgumentNullException(nameof(value), "Attempt to set clipboard with null");
+
+            Process clipboardExecutable = new Process();
+            clipboardExecutable.StartInfo = new ProcessStartInfo // Creates the process
+            {
+                RedirectStandardInput = true,
+                FileName = @"clip",
+            };
+            clipboardExecutable.Start();
+
+            clipboardExecutable.StandardInput.Write(value); // CLIP uses STDIN as input.
+            // When we are done writing all the string, close it so clip doesn't wait and get stuck
+            clipboardExecutable.StandardInput.Close();
+
+            return;
+        }
+
+        public static void GetFile(string value)
+        {
+            if (value == null)
+                throw new ArgumentNullException(nameof(value), "Attempt to set clipboard with null");
+
+            Process pickerExe = new Process();
+            pickerExe.StartInfo = new ProcessStartInfo // Creates the process
+            {
+                RedirectStandardInput = true,
+                RedirectStandardOutput = true,
+                FileName = @"pickerHost",
+            };
+            pickerExe.Start();
+
+            pickerExe.StandardInput.Write(value); // CLIP uses STDIN as input.
+            // When we are done writing all the string, close it so clip doesn't wait and get stuck
+            pickerExe.StandardInput.Close();
+            return;
         }
     }
 }

@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Code Translater\Code Translator.csproj" />
+    <ProjectReference Include="..\Code Translator\Code Translator.csproj" />
   </ItemGroup>
 
 </Project>
