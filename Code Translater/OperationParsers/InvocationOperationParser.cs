@@ -1,6 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
-using Mindustry_Assembly_Compiler.InvocationParsers;
+using Code_Translator.InvocationParsers;
 using MindustryLogics;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace Mindustry_Assembly_Compiler.OperationParsers
+namespace Code_Translator.OperationParsers
 {
     internal class InvocationOperationParser : OperationParserBase<IInvocationOperation>
     {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.CodeAnalysis.Operations;
 
-namespace Mindustry_Assembly_Compiler.OperationParsers
+namespace Code_Translator.OperationParsers
 {
     internal class ConditionalOperationParser : OperationParserBase<IConditionalOperation>
     {

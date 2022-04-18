@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Mindustry_Assembly_Compiler
+namespace Code_Translator
 {
     public class CommandBuilder
     {

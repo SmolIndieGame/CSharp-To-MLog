@@ -1,10 +1,10 @@
 ﻿using Microsoft.CodeAnalysis.Operations;
-using Mindustry_Assembly_Compiler.OperationParsers;
+using Code_Translator.OperationParsers;
 using MindustryLogics;
 using System;
 using System.Text;
 
-namespace Mindustry_Assembly_Compiler.InvocationParsers
+namespace Code_Translator.InvocationParsers
 {
     internal class GetInfoParser : InvocationParserBase
     {

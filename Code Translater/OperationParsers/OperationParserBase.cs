@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mindustry_Assembly_Compiler.OperationParsers
+namespace Code_Translator.OperationParsers
 {
     public abstract class OperationParserBase<T> : IOperationParser where T : class, IOperation
     {

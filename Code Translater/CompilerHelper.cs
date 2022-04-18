@@ -3,7 +3,7 @@ using MindustryLogics;
 using System;
 using System.Collections.Generic;
 
-namespace Mindustry_Assembly_Compiler
+namespace Code_Translator
 {
     public enum TempValueType
     {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Operations;
-using Mindustry_Assembly_Compiler.OperationParsers;
+using Code_Translator.OperationParsers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mindustry_Assembly_Compiler
+namespace Code_Translator
 {
     class w: OperationWalker
     {

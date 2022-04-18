@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mindustry_Assembly_Compiler.OperationParsers
+namespace Code_Translator.OperationParsers
 {
     internal class IncOrDecOperationParser : OperationParserBase<IIncrementOrDecrementOperation>
     {

@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using System.Windows.Forms;
 
-namespace Mindustry_Assembly_Compiler
+namespace Code_Translator
 {
     internal class Program
     {

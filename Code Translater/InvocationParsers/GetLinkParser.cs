@@ -1,6 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
-using Mindustry_Assembly_Compiler.OperationParsers;
+using Code_Translator.OperationParsers;
 using MindustryLogics;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mindustry_Assembly_Compiler.InvocationParsers
+namespace Code_Translator.InvocationParsers
 {
     internal class GetLinkParser : InvocationParserBase
     {

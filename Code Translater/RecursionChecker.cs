@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mindustry_Assembly_Compiler
+namespace Code_Translator
 {
     internal class RecursionChecker
     {

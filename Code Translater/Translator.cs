@@ -8,7 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace Mindustry_Assembly_Compiler
+namespace Code_Translator
 {
     internal class Translator
     {

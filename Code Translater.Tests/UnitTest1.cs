@@ -1,6 +1,6 @@
 using Xunit;
 
-namespace Mindustry_Assembly_Compiler.Tests
+namespace Code_Translator.Tests
 {
     public class UnitTest1
     {
