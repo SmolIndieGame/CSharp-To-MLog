@@ -56,7 +56,7 @@ namespace Mindustry_Assembly_Compiler
                 Console.WriteLine(source);
                 Console.WriteLine();
                 Console.Write("Analysing syntax...");
-                Compiler compiler = new Compiler(source);
+                Translator compiler = new Translator(source);
                 Console.WriteLine("finished.");
                 Console.Write("Compiling...");
                 string compiled = compiler.Compile();

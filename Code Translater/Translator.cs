@@ -10,7 +10,7 @@ using System.Text;
 
 namespace Mindustry_Assembly_Compiler
 {
-    internal class Compiler
+    internal class Translator
     {
         readonly SyntaxTree syntaxTree;
         readonly CompilationUnitSyntax treeRoot;
@@ -27,7 +27,7 @@ namespace Mindustry_Assembly_Compiler
 
         OperationHandler operationHandler;
 
-        public Compiler(string source)
+        public Translator(string source)
         {
             syntaxTree = CSharpSyntaxTree.ParseText(source);
             treeRoot = syntaxTree.GetCompilationUnitRoot();
@@ -91,10 +91,12 @@ namespace Mindustry_Assembly_Compiler
                 className,
                 AddMethodCall);
 
+            AppendCredit();
+
             var ctor = ctors.FirstOrDefault();
             if (ctor != null)
             {
-                if (ctor.ParameterList.Parameters.Count() > 0)
+                if (ctor.ParameterList.Parameters.Count > 0)
                     throw CompilerHelper.Error(ctor, CompilationError.ParameterizedConstructor);
 
                 operationHandler.Handle(semanticModel.GetOperation((SyntaxNode)ctor.Body ?? ctor.ExpressionBody), false, null);
@@ -173,6 +175,14 @@ namespace Mindustry_Assembly_Compiler
         void AddMethodCall(IMethodSymbol method)
         {
             recursionChecker.AddCall(currentMethod, method);
+        }
+
+        void AppendCredit()
+        {
+            output.AppendCommand("jump 4 always");
+            output.AppendCommand("print \"This code is translated from C# code.\"");
+            output.AppendCommand("print \"Check out the translator at\"");
+            output.AppendCommand("print \"https://github.com/SmolIndieGame/CSharp-To-MLog\"");
         }
     }
 }
