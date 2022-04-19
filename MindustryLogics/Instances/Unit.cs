@@ -13,7 +13,7 @@ namespace MindustryLogics
         public double MineY { get; }
         public bool Mining { get; }
         public UnitType Type { get; }
-        public long Flag { get; }
+        public double Flag { get; }
         public string Name { get; }
         public int PayloadCount { get; }
         public object PayloadType { get; }

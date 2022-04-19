@@ -45,7 +45,7 @@
         /// <summary>
         /// The current UNIX timestamp in milliseconds.
         /// </summary>
-        public static double Time { get; }
+        public static long Time { get; }
         /// <summary>
         /// The amount of ticks (60 ticks/second) since the start of the map.
         /// </summary>
