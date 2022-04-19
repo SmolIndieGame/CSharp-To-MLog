@@ -82,9 +82,10 @@ namespace MindustryLogics
         /// The current bound unit must be near the building for this to work.
         /// </summary>
         /// <param name="from">The building to take items from.</param>
+        /// <param name="type">The type of item to take.</param>
         /// <param name="amount">The amount of items to take.</param>
         /// <inheritdoc cref="Mindustry.UnitRadar(RadarFilter, SortMethod, bool)" path="/remarks"/>
-        public static void ItemTake(Building from, int amount) { }
+        public static void ItemTake(Building from, ItemType type, int amount) { }
         
         /// <summary>
         /// Order the current bound unit to drop the current payload (building or unit the current bound unit is carrying) at its current location.<br/>

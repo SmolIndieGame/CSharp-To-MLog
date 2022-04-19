@@ -154,30 +154,30 @@ namespace Code_Translator
         {
             if (whenTrue == null && whenFalse == null) return returnToVar;
 
-            HandleJump(condition, CompilerHelper.VarInCommand(TempValueType.Condition, (++currentConditionIndent).ToString()), whenTrue == null);
+            HandleJump(condition, CompilerHelper.VarInCommand(TempValueType.Condition1, (++currentConditionIndent).ToString()), whenTrue == null);
 
             string @return;
             if (whenTrue == null)
             {
                 @return = Handle(whenFalse, false, returnToVar);
-                output.SetValueToVarInCommand(TempValueType.Condition, (currentConditionIndent--).ToString(), output.nextLineIndex.ToString());
+                output.SetValueToVarInCommand(TempValueType.Condition1, (currentConditionIndent--).ToString(), output.nextLineIndex.ToString());
                 return @return;
             }
 
             if (whenFalse == null)
             {
                 @return = Handle(whenTrue, false, returnToVar);
-                output.SetValueToVarInCommand(TempValueType.Condition, (currentConditionIndent--).ToString(), output.nextLineIndex.ToString());
+                output.SetValueToVarInCommand(TempValueType.Condition1, (currentConditionIndent--).ToString(), output.nextLineIndex.ToString());
                 return @return;
             }
 
             @return = Handle(whenTrue, false, returnToVar);
-            output.AppendCommand($"jump {CompilerHelper.VarInCommand(TempValueType.Condition, "0")} always");
-            output.SetValueToVarInCommand(TempValueType.Condition, (currentConditionIndent--).ToString(), output.nextLineIndex.ToString());
+            output.AppendCommand($"jump {CompilerHelper.VarInCommand(TempValueType.Condition2, currentConditionIndent.ToString())} always");
+            output.SetValueToVarInCommand(TempValueType.Condition1, currentConditionIndent.ToString(), output.nextLineIndex.ToString());
 
             if (@return != Handle(whenFalse, false, returnToVar) && returnToVar != null)
                 throw CompilerHelper.Error(condition.Syntax, CompilationError.Unknown);
-            output.SetValueToVarInCommand(TempValueType.Condition, "0", output.nextLineIndex.ToString());
+            output.SetValueToVarInCommand(TempValueType.Condition2, (currentConditionIndent--).ToString(), output.nextLineIndex.ToString());
 
             return @return;
         }

@@ -7,12 +7,12 @@ namespace Code_Translator
 {
     public enum TempValueType
     {
-        Condition,
+        Condition1,
+        Condition2,
         Function,
         Label,
         LoopEnd,
-        LoopContinue,
-        Return
+        LoopContinue
     }
 
     public static class CompilerHelper

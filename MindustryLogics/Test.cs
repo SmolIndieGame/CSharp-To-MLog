@@ -409,6 +409,23 @@ class Test
         DrawImage(88, 40, ItemType.Graphite, 40, 45);
         DrawFlush(GetLink(342798));
         DrawFlush(32);*/
+
+        if (true)
+        {
+            Print(0);
+        }
+        else
+        {
+            if (false)
+            {
+                Print(1);
+            }
+            else
+            {
+                Print(2);
+            }
+            Print(3);
+        }
     }
 
 
