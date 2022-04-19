@@ -184,8 +184,6 @@ namespace Code_Translator
 
             foreach (var v in declaration.Variables)
             {
-                if (CompilerHelper.IsReserved(v.Identifier.Text))
-                    throw CompilerHelper.Error(declaration, CompilationError.ReservedVarName, v.Identifier.Text);
                 if (semanticModel.GetDeclaredSymbol(v) is IFieldSymbol s && s.IsConst)
                     continue;
                 if (v.Initializer != null)

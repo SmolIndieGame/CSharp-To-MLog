@@ -7,8 +7,9 @@ namespace Code_Translator
 {
     public enum TempValueType
     {
-        Condition1,
-        Condition2,
+        NotJump,
+        ConditionFalse,
+        ConditionEnd,
         Function,
         Label,
         LoopEnd,

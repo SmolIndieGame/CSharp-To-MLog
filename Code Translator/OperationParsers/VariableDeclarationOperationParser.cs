@@ -17,6 +17,8 @@ namespace Code_Translator.OperationParsers
         {
             foreach (var declarator in operation.Declarators)
             {
+                if (CompilerHelper.IsReserved(declarator.Symbol.Name))
+                    throw CompilerHelper.Error(operation.Syntax, CompilationError.ReservedVarName, declarator.Symbol.Name);
                 if (!CompilerHelper.IsTypeAllowed(declarator.Symbol.Type))
                     throw CompilerHelper.Error(operation.Syntax, CompilationError.UnsupportedType);
                 var initializer = declarator.GetVariableInitializer();

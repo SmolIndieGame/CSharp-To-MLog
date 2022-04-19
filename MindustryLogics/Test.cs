@@ -7,7 +7,7 @@ using static MindustryLogics.Drawing;
 class Test
 {
     object yo;
-
+    object ret;
     void Main()
     {
         // The get icon thingy.
@@ -410,21 +410,15 @@ class Test
         DrawFlush(GetLink(342798));
         DrawFlush(32);*/
 
-        if (true)
+        int a = 1;
+        //bool tmp57768564674 = a == 0 || a == 1 || a == 2 && a == 3;
+        if (a == 0 || a == 1 || a == 2 || a == 3)
         {
-            Print(0);
+            Print("Execute");
         }
         else
         {
-            if (false)
-            {
-                Print(1);
-            }
-            else
-            {
-                Print(2);
-            }
-            Print(3);
+            Print("Not");
         }
     }
 

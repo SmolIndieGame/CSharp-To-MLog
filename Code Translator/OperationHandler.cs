@@ -35,6 +35,7 @@ namespace Code_Translator
         public int currentLoopIndent { get; set; }
         public Dictionary<string, int> labelPos { get; }
         public int currentConditionIndent { get; private set; }
+        int jumpIndent;
 
         public OperationHandler(SemanticModel semanticModel, CommandBuilder output, Dictionary<IMethodSymbol, int> methodStartPos, Dictionary<IMethodSymbol, int> methodIndices, Dictionary<IParameterSymbol, int> funcArgIndices, string className, Action<IMethodSymbol> onMethodCalled)
         {
@@ -58,6 +59,7 @@ namespace Code_Translator
             labelPos = new Dictionary<string, int>();
             currentLoopIndent = 0;
             currentConditionIndent = 0;
+            jumpIndent = 0;
         }
 
         public string Handle(IOperation operation, bool canBeInline, in string returnToVar)
@@ -111,17 +113,20 @@ namespace Code_Translator
         public string HandleBinary(BinaryOperatorKind operatorKind, IOperation leftOperand, IOperation rightOperand, bool canBeInline, in string returnToVar)
         {
             StringBuilder builder = new StringBuilder("op");
-            if (operatorKind == BinaryOperatorKind.ConditionalAnd)
+            if (operatorKind == BinaryOperatorKind.ConditionalAnd || operatorKind == BinaryOperatorKind.ConditionalOr)
             {
                 if (!CompilerHelper.IsTempVar(returnToVar))
                     output.AppendCommand($"set {returnToVar} 0");
-                return HandleCondition(leftOperand, rightOperand, null, returnToVar);
+                HandleJump(rightOperand.Parent, CompilerHelper.VarInCommand(TempValueType.NotJump, (++jumpIndent).ToString()), false);
+                output.AppendCommand($"set {returnToVar} 1");
+                output.SetValueToVarInCommand(TempValueType.NotJump, jumpIndent--.ToString(), output.nextLineIndex.ToString());
+                return returnToVar;
             }
-            if (operatorKind == BinaryOperatorKind.ConditionalOr)
+            /*if (operatorKind == BinaryOperatorKind.ConditionalOr)
             {
                 output.AppendCommand($"set {returnToVar} 1");
                 return HandleCondition(leftOperand, null, rightOperand, returnToVar);
-            }
+            }*/
             if (operatorKind == BinaryOperatorKind.NotEquals)
             {
                 string lvalue = CompilerHelper.GetValueFromOperation(leftOperand);
@@ -133,7 +138,7 @@ namespace Code_Translator
                     @return = Handle(leftOperand, canBeInline, returnToVar);
                 if (@return != null)
                 {
-                    if (canBeInline || returnToVar == null)
+                    if (canBeInline || returnToVar == null || returnToVar == @return)
                         return @return;
                     output.AppendCommand($"set {returnToVar} {@return}");
                     return returnToVar;
@@ -150,34 +155,54 @@ namespace Code_Translator
             return returnToVar;
         }
 
+        public void HandleLogicAndOr(IOperation leftOperand, IOperation rightOperand, string jumpTo, bool andOr, bool jumpIf)
+        {
+            if (andOr ^ jumpIf)
+            {
+                HandleJump(leftOperand, jumpTo, !andOr);
+                HandleJump(rightOperand, jumpTo, !andOr);
+                return;
+            }
+
+            if (!andOr ^ jumpIf)
+            {
+                jumpIndent++;
+                HandleJump(leftOperand, CompilerHelper.VarInCommand(TempValueType.NotJump, jumpIndent.ToString()), !andOr);
+                HandleJump(rightOperand, CompilerHelper.VarInCommand(TempValueType.NotJump, jumpIndent.ToString()), !andOr);
+                output.AppendCommand($"jump {jumpTo} always");
+                output.SetValueToVarInCommand(TempValueType.NotJump, jumpIndent.ToString(), output.nextLineIndex.ToString());
+                jumpIndent--;
+            }
+        }
+
         public string HandleCondition(IOperation condition, IOperation whenTrue, IOperation whenFalse, in string returnToVar)
         {
             if (whenTrue == null && whenFalse == null) return returnToVar;
 
-            HandleJump(condition, CompilerHelper.VarInCommand(TempValueType.Condition1, (++currentConditionIndent).ToString()), whenTrue == null);
+            HandleJump(condition, CompilerHelper.VarInCommand(TempValueType.ConditionFalse, (++currentConditionIndent).ToString()), whenTrue == null);
 
             string @return;
             if (whenTrue == null)
             {
                 @return = Handle(whenFalse, false, returnToVar);
-                output.SetValueToVarInCommand(TempValueType.Condition1, (currentConditionIndent--).ToString(), output.nextLineIndex.ToString());
+                output.SetValueToVarInCommand(TempValueType.ConditionFalse, (currentConditionIndent--).ToString(), output.nextLineIndex.ToString());
                 return @return;
             }
 
             if (whenFalse == null)
             {
                 @return = Handle(whenTrue, false, returnToVar);
-                output.SetValueToVarInCommand(TempValueType.Condition1, (currentConditionIndent--).ToString(), output.nextLineIndex.ToString());
+                output.SetValueToVarInCommand(TempValueType.ConditionFalse, (currentConditionIndent--).ToString(), output.nextLineIndex.ToString());
                 return @return;
             }
 
             @return = Handle(whenTrue, false, returnToVar);
-            output.AppendCommand($"jump {CompilerHelper.VarInCommand(TempValueType.Condition2, currentConditionIndent.ToString())} always");
-            output.SetValueToVarInCommand(TempValueType.Condition1, currentConditionIndent.ToString(), output.nextLineIndex.ToString());
+            output.AppendCommand($"jump {CompilerHelper.VarInCommand(TempValueType.ConditionEnd, currentConditionIndent.ToString())} always");
+            output.SetValueToVarInCommand(TempValueType.ConditionFalse, currentConditionIndent.ToString(), output.nextLineIndex.ToString());
 
             if (@return != Handle(whenFalse, false, returnToVar) && returnToVar != null)
                 throw CompilerHelper.Error(condition.Syntax, CompilationError.Unknown);
-            output.SetValueToVarInCommand(TempValueType.Condition2, (currentConditionIndent--).ToString(), output.nextLineIndex.ToString());
+            output.SetValueToVarInCommand(TempValueType.ConditionEnd, (currentConditionIndent--).ToString(), output.nextLineIndex.ToString());
 
             return @return;
         }
@@ -192,6 +217,18 @@ namespace Code_Translator
 
             if (condition is IBinaryOperation o)
             {
+                if (o.OperatorKind == BinaryOperatorKind.ConditionalAnd)
+                {
+                    HandleLogicAndOr(o.LeftOperand, o.RightOperand, jumpToLine, true, jumpIf);
+                    return;
+                }
+
+                if (o.OperatorKind == BinaryOperatorKind.ConditionalOr)
+                {
+                    HandleLogicAndOr(o.LeftOperand, o.RightOperand, jumpToLine, false, jumpIf);
+                    return;
+                }
+
                 StringBuilder builder = new StringBuilder("jump ");
                 builder.Append(jumpToLine);
                 builder.Append(' ');
