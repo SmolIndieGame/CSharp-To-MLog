@@ -27,6 +27,13 @@ namespace Code_Translator.OperationParsers
             funcArgs = new Dictionary<IParameterSymbol, string>();
         }
 
+        public override void Reset()
+        {
+            funcArgs.Clear();
+            foreach (var item in invocations.Values)
+                item.Reset();
+        }
+
         public override string Parse(IInvocationOperation operation, bool canBeInline, in string returnToVar)
         {
             IMethodSymbol method = operation.TargetMethod;

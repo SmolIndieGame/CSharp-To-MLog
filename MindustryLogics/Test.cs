@@ -4,6 +4,7 @@ using static MindustryLogics.UnitControl;
 using static MindustryLogics.Operation;
 using static MindustryLogics.Drawing;
 
+[Credit("By SmolIndieGame aka hi*3")]
 class Test
 {
     object yo;
@@ -420,6 +421,7 @@ class Test
         {
             Print("Not");
         }
+        var b = GetLink(0);
     }
 
 

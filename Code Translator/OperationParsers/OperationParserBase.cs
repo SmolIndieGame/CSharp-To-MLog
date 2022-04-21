@@ -21,6 +21,8 @@ namespace Code_Translator.OperationParsers
             this.output = output;
         }
 
+        public virtual void Reset() { }
+
         public abstract string Parse(T operation, bool canBeInline, in string returnToVar);
 
         string IOperationParser.Parse(IOperation operation, bool canBeInline, in string returnToVar)
@@ -34,5 +36,6 @@ namespace Code_Translator.OperationParsers
         Type OperationType { get; }
 
         string Parse(IOperation operation, bool canBeInline, in string returnToVar);
+        void Reset();
     }
 }

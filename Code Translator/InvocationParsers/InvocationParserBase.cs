@@ -40,6 +40,8 @@ namespace Code_Translator.InvocationParsers
             return argumentOperation;
         }*/
 
+        public virtual void Reset() { }
+
         protected string GenericInstanceCall(IInvocationOperation operation, string opName, in string returnTo)
         {
             string instance = handler.Handle(operation.Instance, true, output.GetNewTempVar());
@@ -70,5 +72,6 @@ namespace Code_Translator.InvocationParsers
         string methodFullName { get; }
 
         string Parse(IInvocationOperation operation, bool canBeInline, in string returnToVar);
+        void Reset();
     }
 }

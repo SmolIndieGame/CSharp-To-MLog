@@ -10,7 +10,6 @@ namespace Code_Translator
     {
         // TODO: write unit test for all operation parser and operation handler and invocation parser
         // TODO: add doc to InfoType and everything
-        // TODO: do credit system (nocredit, CreditAttribute)
         
         // TODO: make condition break, continue, goto and function calls
         // TODO: add support for custom enum
@@ -53,6 +52,9 @@ namespace Code_Translator
             string filePath = Console.ReadLine().Trim('"');
 #endif
 
+            Console.Write("Initializing...");
+            Translator translator = new Translator();
+            Console.WriteLine("finished.");
             while (true)
             {
                 try
@@ -62,7 +64,7 @@ namespace Code_Translator
                     Console.WriteLine(source);
                     Console.WriteLine();
                     Console.Write("Analysing syntax...");
-                    Translator translator = new Translator(source);
+                    translator.SetSource(source);
                     Console.WriteLine("finished.");
                     Console.Write("Checking code validity...");
                     if (!translator.CheckCodeValidity())
@@ -94,7 +96,7 @@ namespace Code_Translator
                 {
                     Console.WriteLine("Operation canceled.");
                 }
-                catch (CompilationException e)
+                catch (Exception e)
                 {
                     Console.WriteLine();
 #if DEBUG
@@ -103,12 +105,10 @@ namespace Code_Translator
                     Console.WriteLine(e.Message);
 #endif
                 }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
 
-                Console.Write("\nPress enter to recompile the file in the same path...");
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                Console.Write($"\nPress enter to translate the file {filePath}");
                 Console.ReadLine();
             }
         }

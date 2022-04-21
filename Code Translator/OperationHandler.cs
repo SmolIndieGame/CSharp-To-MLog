@@ -11,23 +11,13 @@ using System.Threading.Tasks;
 
 namespace Code_Translator
 {
-    class w: OperationWalker
-    {
-        public override void Visit(IOperation operation)
-        {
-            base.Visit(operation);
-            Console.WriteLine($"{operation.Syntax}\t\t{operation.GetType().Name}");
-        }
-    }
-
     public sealed class OperationHandler
     {
-        readonly SemanticModel semanticModel;
         public CommandBuilder output { get; }
         public Dictionary<IMethodSymbol, int> methodStartPos { get; }
         public Dictionary<IMethodSymbol, int> methodIndices { get; }
         public Dictionary<IParameterSymbol, int> funcArgIndices { get; }
-        public string className { get; }
+        public string className { get; private set; }
 
         readonly Dictionary<Type, IOperationParser> operations;
         readonly Action<IMethodSymbol> onMethodCalled;
@@ -37,9 +27,8 @@ namespace Code_Translator
         public int currentConditionIndent { get; private set; }
         int jumpIndent;
 
-        public OperationHandler(SemanticModel semanticModel, CommandBuilder output, Dictionary<IMethodSymbol, int> methodStartPos, Dictionary<IMethodSymbol, int> methodIndices, Dictionary<IParameterSymbol, int> funcArgIndices, string className, Action<IMethodSymbol> onMethodCalled)
+        public OperationHandler(CommandBuilder output, Dictionary<IMethodSymbol, int> methodStartPos, Dictionary<IMethodSymbol, int> methodIndices, Dictionary<IParameterSymbol, int> funcArgIndices, Action<IMethodSymbol> onMethodCalled)
         {
-            this.semanticModel = semanticModel;
             this.output = output;
 
             operations = new Dictionary<Type, IOperationParser>();
@@ -57,6 +46,19 @@ namespace Code_Translator
             this.onMethodCalled = onMethodCalled;
 
             labelPos = new Dictionary<string, int>();
+            currentLoopIndent = 0;
+            currentConditionIndent = 0;
+            jumpIndent = 0;
+        }
+
+        public void Reset(string newClassName)
+        {
+            className = newClassName;
+
+            foreach (var item in operations.Values)
+                item.Reset();
+
+            labelPos.Clear();
             currentLoopIndent = 0;
             currentConditionIndent = 0;
             jumpIndent = 0;

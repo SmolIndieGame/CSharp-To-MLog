@@ -13,10 +13,9 @@ namespace Code_Translator
 {
     internal class Translator
     {
-        readonly SyntaxTree syntaxTree;
-        readonly CompilationUnitSyntax treeRoot;
-        readonly SemanticModel semanticModel;
-        readonly CSharpCompilation compilation;
+        SyntaxTree syntaxTree;
+        SemanticModel semanticModel;
+        CSharpCompilation compilation;
 
         readonly CommandBuilder output;
         readonly Dictionary<IMethodSymbol, int> methodStartPos;
@@ -29,25 +28,44 @@ namespace Code_Translator
 
         OperationHandler operationHandler;
 
-        public Translator(string source)
+        public Translator()
         {
-            syntaxTree = CSharpSyntaxTree.ParseText(source);
-            treeRoot = syntaxTree.GetCompilationUnitRoot();
-            compilation = CSharpCompilation.Create("Assem")
-                .AddReferences(MetadataReference.CreateFromFile(typeof(object).Assembly.Location))
-                .AddReferences(MetadataReference.CreateFromFile(typeof(Mindustry).Assembly.Location))
-                .AddSyntaxTrees(syntaxTree)
-                .WithOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+            List<MetadataReference> references = new List<MetadataReference>
+            {
+                MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(Mindustry).Assembly.Location)
+            };
 
             var refs = Assembly.GetAssembly(typeof(Mindustry)).GetReferencedAssemblies();
-            compilation = compilation.AddReferences(refs.Select(n => MetadataReference.CreateFromFile(Assembly.Load(n).Location)));
-            semanticModel = compilation.GetSemanticModel(syntaxTree);
+            foreach (var @ref in refs)
+                references.Add(MetadataReference.CreateFromFile(Assembly.Load(@ref).Location));
+
+            compilation = CSharpCompilation.Create("Assem", null, references, new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
             output = new CommandBuilder(new StringBuilder());
             methodStartPos = new Dictionary<IMethodSymbol, int>();
             methodIndices = new Dictionary<IMethodSymbol, int>();
             funcArgIndices = new Dictionary<IParameterSymbol, int>();
             recursionChecker = new RecursionChecker();
+
+            operationHandler = new OperationHandler(
+                output,
+                methodStartPos,
+                methodIndices,
+                funcArgIndices,
+                AddMethodCall);
+        }
+
+        public void SetSource(string source)
+        {
+            var tmp = CSharpSyntaxTree.ParseText(source);
+            if (compilation.ContainsSyntaxTree(syntaxTree))
+                compilation = compilation.ReplaceSyntaxTree(syntaxTree, tmp);
+            else
+                compilation = compilation.AddSyntaxTrees(tmp);
+            syntaxTree = tmp;
+
+            semanticModel = compilation.GetSemanticModel(syntaxTree, false);
         }
 
         public bool CheckCodeValidity()
@@ -75,11 +93,9 @@ namespace Code_Translator
             methodStartPos.Clear();
             methodIndices.Clear();
             funcArgIndices.Clear();
+            recursionChecker.Reset();
 
-            //if (treeRoot.Usings.Count != 1 || treeRoot.Usings.First().Name.ToString() != "MindustryLogics")
-            //    throw CompilerHelper.Error(null, CompilationError.UnsupportedUsings);
-
-            IEnumerable<SyntaxNode> allNodes = treeRoot.DescendantNodes();
+            IEnumerable<SyntaxNode> allNodes = syntaxTree.GetCompilationUnitRoot().DescendantNodes();
 
             var classes = allNodes.OfType<ClassDeclarationSyntax>();
             if (classes.Count() > 1)
@@ -95,6 +111,8 @@ namespace Code_Translator
             if (@class.Modifiers.Count > 0)
                 throw CompilerHelper.Error(@class, CompilationError.ClassModifier, className);
 
+            AppendCredit(@class);
+
             var fields = allNodes.OfType<FieldDeclarationSyntax>();
             var declarations = fields.Select(n => n.Declaration);
             foreach (var declaration in declarations)
@@ -104,16 +122,7 @@ namespace Code_Translator
             if (ctors.Count() > 1)
                 throw CompilerHelper.Error(@class, CompilationError.TooManyConstructor);
 
-            operationHandler = new OperationHandler(
-                semanticModel,
-                output,
-                methodStartPos,
-                methodIndices,
-                funcArgIndices,
-                className,
-                AddMethodCall);
-
-            AppendCredit();
+            operationHandler.Reset(className);
 
             var ctor = ctors.FirstOrDefault();
             if (ctor != null)
@@ -197,9 +206,29 @@ namespace Code_Translator
             recursionChecker.AddCall(currentMethod, method);
         }
 
-        void AppendCredit()
+        private void AppendCredit(ClassDeclarationSyntax @class)
         {
-            output.AppendCommand("jump 4 always");
+            List<string> credits = new List<string>();
+            foreach (var attributeList in @class.AttributeLists)
+                foreach (var attribute in attributeList.Attributes)
+                {
+                    if (semanticModel.GetSymbolInfo(attribute).Symbol.ContainingType is not ITypeSymbol s)
+                        throw CompilerHelper.Error(attribute, CompilationError.Unknown);
+                    if (s.IsType<CreditAttribute>())
+                    {
+                        ExpressionSyntax expression = attribute.ArgumentList.Arguments[0].Expression;
+                        string value = CompilerHelper.GetValueFromOperation(semanticModel.GetOperation(expression));
+                        if (value == null)
+                            throw CompilerHelper.Error(expression, CompilationError.NotConstantValue);
+                        credits.Add(value);
+                    }
+                    if (s.IsType<ExcludeCreditAttribute>())
+                        return;
+                }
+
+            output.AppendCommand($"jump {credits.Count + 4} always");
+            foreach (var credit in credits)
+                output.AppendCommand($"print {credit}");
             output.AppendCommand("print \"This code is translated from C# code.\"");
             output.AppendCommand("print \"Check out the translator at\"");
             output.AppendCommand("print \"https://github.com/SmolIndieGame/CSharp-To-MLog\"");

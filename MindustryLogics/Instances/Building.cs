@@ -6,33 +6,49 @@ using System.Threading.Tasks;
 
 namespace MindustryLogics
 {
+    /// <summary>
+    /// An instance of a building.<br/>
+    /// This class contains all information about a building.<br/>
+    /// Do stuff with the building by accessing its member, for example,<br/>
+    /// <c>b.Shoot(10, 10, true)</c> will make building b shoot at (10, 10).
+    /// </summary>
     public abstract class Building : Entity
     {
+        /// <inheritdoc cref="InfoType.TotalLiquids"/>
         public double TotalLiquids { get; }
+        /// <inheritdoc cref="InfoType.TotalPower"/>
         public double TotalPower { get; }
+        /// <inheritdoc cref="InfoType.LiquidCapacity"/>
         public double LiquidCapacity { get; }
+        /// <inheritdoc cref="InfoType.PowerCapacity"/>
         public double PowerCapacity { get; }
+        /// <inheritdoc cref="InfoType.PowerNetStored"/>
         public double PowerNetStored { get; }
+        /// <inheritdoc cref="InfoType.PowerNetCapacity"/>
         public double PowerNetCapacity { get; }
+        /// <inheritdoc cref="InfoType.PowerNetIn"/>
         public double PowerNetIn { get; }
+        /// <inheritdoc cref="InfoType.PowerNetOut"/>
         public double PowerNetOut { get; }
+        /// <inheritdoc cref="InfoType.Heat"/>
         public double Heat { get; }
+        /// <inheritdoc cref="InfoType.Efficiency"/>
         public double Efficiency { get; }
-        /// <summary>
-        /// Not available on V6.
-        /// </summary>
+        /// <inheritdoc cref="InfoType.Progress"/>
         public double Progress { get; }
+        /// <inheritdoc cref="InfoType.Timescale"/>
         public double Timescale { get; }
+        /// <inheritdoc cref="InfoType.Type"/>
         public BuildingType Type { get; }
+        /// <inheritdoc cref="InfoType.Enabled"/>
         public bool Enabled { get; set; }
 
-        /// <summary>
-        /// Setter only works on V7, if you are on V6, use <see cref="Configure"/> instead.
-        /// </summary>
+        /// <inheritdoc cref="InfoType.Config"/>
+        /// <remarks>Setter is not available on V6, if you are on V6, use <see cref="Configure"/> instead.</remarks>
         public ItemType Config { get; set; }
 
         /// <summary>
-        /// Same as <see cref="Config"/>, but only works on V6.
+        /// Same as <see cref="Config"/>, but also works on V6.
         /// </summary>
         public ItemType Configure { set => _ = value; }
 

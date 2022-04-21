@@ -205,6 +205,7 @@
         /// <param name="entity">The eneity to get information form.</param>
         /// <param name="info">The type of information to get.</param>
         /// <returns></returns>
+        /// <remarks>Since the return type of this method is an object, it is strongly recommended to access the properties of the entity instead.</remarks>
         public static object Sensor(Entity entity, InfoType info) => default;
 
         /// <summary>

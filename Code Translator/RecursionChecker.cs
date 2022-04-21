@@ -19,6 +19,13 @@ namespace Code_Translator
             allCalls = new Dictionary<IMethodSymbol, HashSet<IMethodSymbol>>();
         }
 
+        public void Reset()
+        {
+            foreach (var item in allCalls.Values)
+                item.Clear();
+            allCalls.Clear();
+        }
+
         public void AddCall(IMethodSymbol caller, IMethodSymbol callee)
         {
             if (!allCalls.TryGetValue(caller, out HashSet<IMethodSymbol> allCallsOfCaller))
