@@ -2,7 +2,7 @@
 
 namespace Code_Translator
 {
-    public enum CompilationError
+    internal enum CompilationError
     {
         UnsupportedStatement,
         UnsupportedExpression,
@@ -40,7 +40,7 @@ namespace Code_Translator
     }
 
     [Serializable]
-    public class CompilationException : Exception
+    internal class CompilationException : Exception
     {
         public static string GetMessage(CompilationError error)
         {

@@ -9,12 +9,12 @@ namespace Code_Translator.OperationParsers
 {
     public abstract class OperationParserBase<T> : IOperationParser where T : class, IOperation
     {
-        protected readonly OperationHandler handler;
-        protected readonly CommandBuilder output;
+        protected readonly IOperationHandler handler;
+        protected readonly ICommandBuilder output;
         
         public Type OperationType { get; }
 
-        public OperationParserBase(OperationHandler handler, CommandBuilder output)
+        public OperationParserBase(IOperationHandler handler, ICommandBuilder output)
         {
             OperationType = typeof(T);
             this.handler = handler;

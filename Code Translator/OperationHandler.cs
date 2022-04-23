@@ -11,25 +11,30 @@ using System.Threading.Tasks;
 
 namespace Code_Translator
 {
-    public sealed class OperationHandler
+    public sealed class OperationHandler : IOperationHandler
     {
-        public CommandBuilder output { get; }
+        readonly CommandBuilder output;
         public Dictionary<IMethodSymbol, int> methodStartPos { get; }
         public Dictionary<IMethodSymbol, int> methodIndices { get; }
         public Dictionary<IParameterSymbol, int> funcArgIndices { get; }
-        public string className { get; private set; }
-
-        readonly Dictionary<Type, IOperationParser> operations;
         readonly Action<IMethodSymbol> onMethodCalled;
 
-        public int currentLoopIndent { get; set; }
+        public string className { get; private set; }
+
         public Dictionary<string, int> labelPos { get; }
-        public int currentConditionIndent { get; private set; }
+        public int currentLoopIndent { get; set; }
+        int conditionIndent;
         int jumpIndent;
+
+        readonly Dictionary<Type, IOperationParser> operations;
 
         public OperationHandler(CommandBuilder output, Dictionary<IMethodSymbol, int> methodStartPos, Dictionary<IMethodSymbol, int> methodIndices, Dictionary<IParameterSymbol, int> funcArgIndices, Action<IMethodSymbol> onMethodCalled)
         {
             this.output = output;
+            this.methodStartPos = methodStartPos;
+            this.methodIndices = methodIndices;
+            this.funcArgIndices = funcArgIndices;
+            this.onMethodCalled = onMethodCalled;
 
             operations = new Dictionary<Type, IOperationParser>();
             Type[] alltypes = Assembly.GetExecutingAssembly().GetTypes();
@@ -39,15 +44,9 @@ namespace Code_Translator
                 operations.Add(instance.OperationType, instance);
             }
 
-            this.methodStartPos = methodStartPos;
-            this.methodIndices = methodIndices;
-            this.funcArgIndices = funcArgIndices;
-            this.className = className;
-            this.onMethodCalled = onMethodCalled;
-
             labelPos = new Dictionary<string, int>();
             currentLoopIndent = 0;
-            currentConditionIndent = 0;
+            conditionIndent = 0;
             jumpIndent = 0;
         }
 
@@ -60,7 +59,7 @@ namespace Code_Translator
 
             labelPos.Clear();
             currentLoopIndent = 0;
-            currentConditionIndent = 0;
+            conditionIndent = 0;
             jumpIndent = 0;
         }
 
@@ -181,30 +180,30 @@ namespace Code_Translator
         {
             if (whenTrue == null && whenFalse == null) return returnToVar;
 
-            HandleJump(condition, CompilerHelper.VarInCommand(TempValueType.ConditionFalse, (++currentConditionIndent).ToString()), whenTrue == null);
+            HandleJump(condition, CompilerHelper.VarInCommand(TempValueType.ConditionFalse, (++conditionIndent).ToString()), whenTrue == null);
 
             string @return;
             if (whenTrue == null)
             {
                 @return = Handle(whenFalse, false, returnToVar);
-                output.SetValueToVarInCommand(TempValueType.ConditionFalse, (currentConditionIndent--).ToString(), output.nextLineIndex.ToString());
+                output.SetValueToVarInCommand(TempValueType.ConditionFalse, (conditionIndent--).ToString(), output.nextLineIndex.ToString());
                 return @return;
             }
 
             if (whenFalse == null)
             {
                 @return = Handle(whenTrue, false, returnToVar);
-                output.SetValueToVarInCommand(TempValueType.ConditionFalse, (currentConditionIndent--).ToString(), output.nextLineIndex.ToString());
+                output.SetValueToVarInCommand(TempValueType.ConditionFalse, (conditionIndent--).ToString(), output.nextLineIndex.ToString());
                 return @return;
             }
 
             @return = Handle(whenTrue, false, returnToVar);
-            output.AppendCommand($"jump {CompilerHelper.VarInCommand(TempValueType.ConditionEnd, currentConditionIndent.ToString())} always");
-            output.SetValueToVarInCommand(TempValueType.ConditionFalse, currentConditionIndent.ToString(), output.nextLineIndex.ToString());
+            output.AppendCommand($"jump {CompilerHelper.VarInCommand(TempValueType.ConditionEnd, conditionIndent.ToString())} always");
+            output.SetValueToVarInCommand(TempValueType.ConditionFalse, conditionIndent.ToString(), output.nextLineIndex.ToString());
 
             if (@return != Handle(whenFalse, false, returnToVar) && returnToVar != null)
                 throw CompilerHelper.Error(condition.Syntax, CompilationError.Unknown);
-            output.SetValueToVarInCommand(TempValueType.ConditionEnd, (currentConditionIndent--).ToString(), output.nextLineIndex.ToString());
+            output.SetValueToVarInCommand(TempValueType.ConditionEnd, (conditionIndent--).ToString(), output.nextLineIndex.ToString());
 
             return @return;
         }

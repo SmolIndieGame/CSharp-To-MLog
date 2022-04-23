@@ -16,7 +16,7 @@ namespace Code_Translator
         LoopContinue
     }
 
-    public static class CompilerHelper
+    internal static class CompilerHelper
     {
         static readonly HashSet<Type> typeEnums = new HashSet<Type>
         {

@@ -6,9 +6,9 @@ using System.Text;
 
 namespace Code_Translator.InvocationParsers
 {
-    internal class GetQuantityOfParser : InvocationParserBase
+    public class GetQuantityOfParser : InvocationParserBase
     {
-        public GetQuantityOfParser(OperationHandler handler, InvocationOperationParser operationParser, CommandBuilder output) : base(handler, operationParser, output)
+        public GetQuantityOfParser(IOperationHandler handler, IInvocationOperationParser operationParser, ICommandBuilder output) : base(handler, operationParser, output)
         {
         }
 
@@ -17,7 +17,7 @@ namespace Code_Translator.InvocationParsers
 
         public override string Parse(IInvocationOperation operation, bool canBeInline, in string returnToVar)
         {
-            return GenericInstanceCall(operation, "sensor", returnToVar);
+            return operationParser.GenericInstanceCall(operation, "sensor", returnToVar);
         }
     }
 }

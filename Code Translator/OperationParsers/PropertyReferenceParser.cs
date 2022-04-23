@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Code_Translator.OperationParsers
 {
-    internal class PropertyReferenceParser : OperationParserBase<IPropertyReferenceOperation>
+    public class PropertyReferenceParser : OperationParserBase<IPropertyReferenceOperation>
     {
-        public PropertyReferenceParser(OperationHandler handler, CommandBuilder output) : base(handler, output)
+        public PropertyReferenceParser(IOperationHandler handler, ICommandBuilder output) : base(handler, output)
         {
         }
 

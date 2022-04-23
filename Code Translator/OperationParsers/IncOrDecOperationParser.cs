@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Code_Translator.OperationParsers
 {
-    internal class IncOrDecOperationParser : OperationParserBase<IIncrementOrDecrementOperation>
+    public class IncOrDecOperationParser : OperationParserBase<IIncrementOrDecrementOperation>
     {
-        public IncOrDecOperationParser(OperationHandler handler, CommandBuilder output) : base(handler, output)
+        public IncOrDecOperationParser(IOperationHandler handler, ICommandBuilder output) : base(handler, output)
         {
         }
 

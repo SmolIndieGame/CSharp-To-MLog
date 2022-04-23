@@ -2,7 +2,7 @@
 
 namespace Code_Translator
 {
-    public class CommandBuilder
+    public class CommandBuilder : ICommandBuilder
     {
         readonly StringBuilder sb;
         public int nextLineIndex { get; private set; }

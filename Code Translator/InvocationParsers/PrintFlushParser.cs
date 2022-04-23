@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace Code_Translator.InvocationParsers
 {
-    internal class PrintFlushParser : InvocationParserBase
+    public class PrintFlushParser : InvocationParserBase
     {
-        public PrintFlushParser(OperationHandler handler, InvocationOperationParser operationParser, CommandBuilder output) : base(handler, operationParser, output)
+        public PrintFlushParser(IOperationHandler handler, IInvocationOperationParser operationParser, ICommandBuilder output) : base(handler, operationParser, output)
         {
         }
 

@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace Code_Translator.InvocationParsers
 {
-    internal class GetIconParser : InvocationParserBase
+    public class GetIconParser : InvocationParserBase
     {
-        public GetIconParser(OperationHandler handler, InvocationOperationParser operationParser, CommandBuilder output) : base(handler, operationParser, output)
+        public GetIconParser(IOperationHandler handler, IInvocationOperationParser operationParser, ICommandBuilder output) : base(handler, operationParser, output)
         {
         }
 

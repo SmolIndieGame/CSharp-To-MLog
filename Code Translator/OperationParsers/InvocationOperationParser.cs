@@ -10,12 +10,19 @@ using System.Text;
 
 namespace Code_Translator.OperationParsers
 {
-    internal class InvocationOperationParser : OperationParserBase<IInvocationOperation>
+    public interface IInvocationOperationParser
+    {
+        Dictionary<IParameterSymbol, string> funcArgs { get; }
+        string GenericCall(IInvocationOperation operation, string opName, in string returnTo);
+        string GenericInstanceCall(IInvocationOperation operation, string opName, in string returnTo);
+    }
+
+    public class InvocationOperationParser : OperationParserBase<IInvocationOperation>, IInvocationOperationParser
     {
         readonly Dictionary<string, IInvocationParser> invocations;
-        public readonly Dictionary<IParameterSymbol, string> funcArgs;
+        public Dictionary<IParameterSymbol, string> funcArgs { get; }
 
-        public InvocationOperationParser(OperationHandler handler, CommandBuilder output) : base(handler, output)
+        public InvocationOperationParser(IOperationHandler handler, ICommandBuilder output) : base(handler, output)
         {
             invocations = new Dictionary<string, IInvocationParser>();
             Type[] alltypes = Assembly.GetExecutingAssembly().GetTypes();
@@ -116,6 +123,28 @@ namespace Code_Translator.OperationParsers
             foreach (var param in operation.TargetMethod.Parameters)
                 builder.Append(funcArgs[param]);
 
+            output.AppendCommand(builder.ToString());
+            return returnTo;
+        }
+
+        public string GenericInstanceCall(IInvocationOperation operation, string opName, in string returnTo)
+        {
+            string instance = handler.Handle(operation.Instance, true, output.GetNewTempVar());
+            if (instance == null)
+                throw CompilerHelper.Error(operation.Instance.Syntax, CompilationError.NoReturnValue);
+
+            StringBuilder builder = new(opName);
+            if (!operation.TargetMethod.ReturnsVoid)
+            {
+                builder.Append(' ');
+                builder.Append(returnTo ?? "_");
+            }
+            builder.Append(' ');
+            builder.Append(instance);
+            foreach (var op in operation.Arguments)
+                funcArgs[op.Parameter] = handler.ToArgument(op.Value);
+            foreach (var param in operation.TargetMethod.Parameters)
+                builder.Append(funcArgs[param]);
             output.AppendCommand(builder.ToString());
             return returnTo;
         }

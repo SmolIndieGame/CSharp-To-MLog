@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace Code_Translator.InvocationParsers
 {
-    internal class CustomTypeParser : InvocationParserBase
+    public class CustomTypeParser : InvocationParserBase
     {
-        public CustomTypeParser(OperationHandler handler, InvocationOperationParser operationParser, CommandBuilder output) : base(handler, operationParser, output)
+        public CustomTypeParser(IOperationHandler handler, IInvocationOperationParser operationParser, ICommandBuilder output) : base(handler, operationParser, output)
         {
         }
 

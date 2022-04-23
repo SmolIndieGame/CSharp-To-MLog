@@ -7,9 +7,9 @@ using System.Text;
 
 namespace Code_Translator.InvocationParsers
 {
-    internal class UnitIsWithInParser : InvocationParserBase
+    public class UnitIsWithInParser : InvocationParserBase
     {
-        public UnitIsWithInParser(OperationHandler handler, InvocationOperationParser operationParser, CommandBuilder output) : base(handler, operationParser, output)
+        public UnitIsWithInParser(IOperationHandler handler, IInvocationOperationParser operationParser, ICommandBuilder output) : base(handler, operationParser, output)
         {
         }
 

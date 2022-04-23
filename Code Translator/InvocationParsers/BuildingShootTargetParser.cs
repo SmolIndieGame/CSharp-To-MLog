@@ -6,9 +6,9 @@ using System.Text;
 
 namespace Code_Translator.InvocationParsers
 {
-    internal class BuildingShootTargetParser : InvocationParserBase
+    public class BuildingShootTargetParser : InvocationParserBase
     {
-        public BuildingShootTargetParser(OperationHandler handler, InvocationOperationParser operationParser, CommandBuilder output) : base(handler, operationParser, output)
+        public BuildingShootTargetParser(IOperationHandler handler, IInvocationOperationParser operationParser, ICommandBuilder output) : base(handler, operationParser, output)
         {
         }
 
@@ -17,7 +17,7 @@ namespace Code_Translator.InvocationParsers
 
         public override string Parse(IInvocationOperation operation, bool canBeInline, in string returnToVar)
         {
-            return GenericInstanceCall(operation, "control shootp", returnToVar);
+            return operationParser.GenericInstanceCall(operation, "control shootp", returnToVar);
         }
     }
 }

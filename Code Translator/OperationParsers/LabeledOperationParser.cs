@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Code_Translator.OperationParsers
 {
-    internal class LabeledOperationParser : OperationParserBase<ILabeledOperation>
+    public class LabeledOperationParser : OperationParserBase<ILabeledOperation>
     {
-        public LabeledOperationParser(OperationHandler handler, CommandBuilder output) : base(handler, output)
+        public LabeledOperationParser(IOperationHandler handler, ICommandBuilder output) : base(handler, output)
         {
         }
 

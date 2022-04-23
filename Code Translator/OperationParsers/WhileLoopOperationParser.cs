@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 namespace Code_Translator.OperationParsers
 {
-    internal class WhileLoopOperationParser : OperationParserBase<IWhileLoopOperation>
+    public class WhileLoopOperationParser : OperationParserBase<IWhileLoopOperation>
     {
 
-        public WhileLoopOperationParser(OperationHandler handler, CommandBuilder output) : base(handler, output)
+        public WhileLoopOperationParser(IOperationHandler handler, ICommandBuilder output) : base(handler, output)
         {
         }
 

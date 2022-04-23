@@ -2,9 +2,9 @@
 
 namespace Code_Translator.OperationParsers
 {
-    internal class ConditionalOperationParser : OperationParserBase<IConditionalOperation>
+    public class ConditionalOperationParser : OperationParserBase<IConditionalOperation>
     {
-        public ConditionalOperationParser(OperationHandler handler, CommandBuilder output) : base(handler, output)
+        public ConditionalOperationParser(IOperationHandler handler, ICommandBuilder output) : base(handler, output)
         {
         }
 

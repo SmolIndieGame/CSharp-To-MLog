@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Code_Translator.OperationParsers
 {
-    internal class AssignmentOperationParser : OperationParserBase<IAssignmentOperation>
+    public class AssignmentOperationParser : OperationParserBase<IAssignmentOperation>
     {
-        public AssignmentOperationParser(OperationHandler handler, CommandBuilder output) : base(handler, output) { }
+        public AssignmentOperationParser(IOperationHandler handler, ICommandBuilder output) : base(handler, output) { }
 
         public override string Parse(IAssignmentOperation operation, bool canBeInline, in string returnToVar)
         {

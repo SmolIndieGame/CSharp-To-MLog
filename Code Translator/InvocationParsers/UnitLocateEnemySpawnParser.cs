@@ -7,9 +7,9 @@ using System.Text;
 
 namespace Code_Translator.InvocationParsers
 {
-    internal class UnitLocateEnemySpawnParser : InvocationParserBase
+    public class UnitLocateEnemySpawnParser : InvocationParserBase
     {
-        public UnitLocateEnemySpawnParser(OperationHandler handler, InvocationOperationParser operationParser, CommandBuilder output) : base(handler, operationParser, output)
+        public UnitLocateEnemySpawnParser(IOperationHandler handler, IInvocationOperationParser operationParser, ICommandBuilder output) : base(handler, operationParser, output)
         {
         }
 

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 namespace Code_Translator.OperationParsers
 {
-    internal class ForLoopOperationParser : OperationParserBase<IForLoopOperation>
+    public class ForLoopOperationParser : OperationParserBase<IForLoopOperation>
     {
 
-        public ForLoopOperationParser(OperationHandler handler, CommandBuilder output) : base(handler, output)
+        public ForLoopOperationParser(IOperationHandler handler, ICommandBuilder output) : base(handler, output)
         {
         }
 

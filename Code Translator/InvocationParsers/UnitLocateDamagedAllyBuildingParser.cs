@@ -7,9 +7,9 @@ using System.Text;
 
 namespace Code_Translator.InvocationParsers
 {
-    internal class UnitLocateDamagedAllyBuildingParser : InvocationParserBase
+    public class UnitLocateDamagedAllyBuildingParser : InvocationParserBase
     {
-        public UnitLocateDamagedAllyBuildingParser(OperationHandler handler, InvocationOperationParser operationParser, CommandBuilder output) : base(handler, operationParser, output)
+        public UnitLocateDamagedAllyBuildingParser(IOperationHandler handler, IInvocationOperationParser operationParser, ICommandBuilder output) : base(handler, operationParser, output)
         {
         }
 

@@ -9,7 +9,7 @@ namespace Code_Translator
     internal class Program
     {
         // TODO: write unit test for all operation parser and operation handler and invocation parser
-        // TODO: add doc to InfoType and everything
+        // TODO: make tutorial and add doc to readme.md
         
         // TODO: make condition break, continue, goto and function calls
         // TODO: add support for custom enum
