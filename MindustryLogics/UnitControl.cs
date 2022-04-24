@@ -121,7 +121,7 @@ namespace MindustryLogics
         /// </summary>
         /// <param name="value">The numeric value to flag the unit with.</param>
         /// <inheritdoc cref="Mindustry.UnitRadar(RadarFilter, SortMethod, bool)" path="/remarks"/>
-        public static void Flag(long value) { }
+        public static void Flag(double value) { }
 
         /// <summary>
         /// Order the current bound unit to build a building of type <paramref name="buildingType"/> at location (<paramref name="x"/>, <paramref name="y"/>) if the unit can build.

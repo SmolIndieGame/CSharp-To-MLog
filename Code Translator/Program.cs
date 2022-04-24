@@ -16,8 +16,9 @@ namespace Code_Translator
         // TODO: add set color control
         // TODO: add support for foreach loop
         // TODO: add cellArray and cellStack
-        // TODO: add support for switch
+        // TODO: add support for switch statement
         // TODO: Change the compiler variable name
+        // TODO: add LinkRef
 
         [STAThread]
         static void Main(string[] args)

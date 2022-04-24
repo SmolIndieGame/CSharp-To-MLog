@@ -13,7 +13,7 @@ namespace Code_Translator
 {
     public sealed class OperationHandler : IOperationHandler
     {
-        readonly CommandBuilder output;
+        readonly ICommandBuilder output;
         public Dictionary<IMethodSymbol, int> methodStartPos { get; }
         public Dictionary<IMethodSymbol, int> methodIndices { get; }
         public Dictionary<IParameterSymbol, int> funcArgIndices { get; }
@@ -28,7 +28,7 @@ namespace Code_Translator
 
         readonly Dictionary<Type, IOperationParser> operations;
 
-        public OperationHandler(CommandBuilder output, Dictionary<IMethodSymbol, int> methodStartPos, Dictionary<IMethodSymbol, int> methodIndices, Dictionary<IParameterSymbol, int> funcArgIndices, Action<IMethodSymbol> onMethodCalled)
+        public OperationHandler(ICommandBuilder output, Dictionary<IMethodSymbol, int> methodStartPos, Dictionary<IMethodSymbol, int> methodIndices, Dictionary<IParameterSymbol, int> funcArgIndices, Action<IMethodSymbol> onMethodCalled)
         {
             this.output = output;
             this.methodStartPos = methodStartPos;
@@ -77,20 +77,20 @@ namespace Code_Translator
 
             switch (operation)
             {
-                case IConversionOperation o:
-                    if (o.Operand.Type.IsTypeEnum() && o.Type.SpecialType != SpecialType.System_Object)
-                        throw CompilerHelper.Error(o.Syntax, CompilationError.CastingEnum);
-                    return Handle(o.Operand, canBeInline, returnToVar);
                 case IExpressionStatementOperation o:
                     return Handle(o.Operation, false, null);
-                case IVariableDeclarationGroupOperation o:
-                    foreach (var op in o.Declarations)
-                        Handle(op, false, null);
-                    return null;
                 case IBlockOperation o:
                     foreach (var op in o.Operations)
                         Handle(op, false, null);
                     return null;
+                case IVariableDeclarationGroupOperation o:
+                    foreach (var op in o.Declarations)
+                        Handle(op, false, null);
+                    return null;
+                case IConversionOperation o:
+                    if (o.Operand.Type.IsTypeEnum() && o.Type.SpecialType != SpecialType.System_Object)
+                        throw CompilerHelper.Error(o.Syntax, CompilationError.CastingEnum);
+                    return Handle(o.Operand, canBeInline, returnToVar);
                 case IInstanceReferenceOperation o:
                     if (o.ReferenceKind != InstanceReferenceKind.ContainingTypeInstance)
                         throw CompilerHelper.Error(o.Syntax, CompilationError.Unknown);
