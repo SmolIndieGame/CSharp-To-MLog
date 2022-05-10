@@ -133,7 +133,7 @@ namespace Code_Transpiler
                 string value = operation.ConstantValue.Value.ToString();
                 if (value.Contains('"'))
                     throw Error(operation.Syntax, CompilationError.UnsupportedCharacter, '"');
-                return $"\"{value.Replace("\r", "").Replace("\n", "\\n").Replace("[", "[[")}\"";
+                return $"\"{value.Replace("\r", "").Replace("\n", "\\n")}\"";
             }
             return operation.ConstantValue.Value?.ToString() ?? "null";
         }

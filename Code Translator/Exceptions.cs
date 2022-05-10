@@ -69,14 +69,14 @@ namespace Code_Transpiler
                 CompilationError.ReferencedProperty => "User defined property is unsupported, use method instead.",
                 CompilationError.StringAddition => "Mindustry does not support string addition.",
                 CompilationError.NoneEnumLiteral => "Enum value of None is not allowed here.",
-                CompilationError.WithinNamespace => "The class to translate must not be contained in a namespace.",
-                CompilationError.InheritClasses => "The class to translate must inherit System.Object.",
+                CompilationError.WithinNamespace => "The class to transpile must not be contained in a namespace.",
+                CompilationError.InheritClasses => "The class to transpile must inherit System.Object.",
                 CompilationError.CastingEnum => "Enum that represents types cannot be cast to numbers.",
                 CompilationError.InvalidLinkIndex => "Link index out of bound. (link index starts at 1)",
                 CompilationError.TooManyConstraints => "Too many constraints, only a maximum of three constraints are allowed.",
                 CompilationError.NullLiteral => "Null is not allowed here.",
                 CompilationError.ReferenceParameter => "Reference parameter in user defined method is currently unsupported.",
-                CompilationError.ClassModifier => "Modifiers for the class to translate is unsupported, declare the class as:\nclass {0} {{ }}",
+                CompilationError.ClassModifier => "Modifiers for the class to transpile is unsupported, declare the class as:\nclass {0} {{ }}",
                 _ => error.ToString(),
             };
         }

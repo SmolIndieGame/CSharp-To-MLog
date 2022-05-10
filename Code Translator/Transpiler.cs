@@ -87,7 +87,7 @@ namespace Code_Transpiler
             return returns;
         }
 
-        public string Translate()
+        public string Transpile()
         {
             output.Clear();
             methodStartPos.Clear();

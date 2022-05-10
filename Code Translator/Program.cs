@@ -32,15 +32,15 @@ namespace Code_Transpiler
 #if DEBUG
             string filePath = Path.GetFullPath(@"..\..\..\..\MindustryLogics\Test.cs");
 #else
-        translate:
-            Console.WriteLine("Drop the .cs file that you want to translate to this window and then press enter.");
+        transpile:
+            Console.WriteLine("Drop the .cs file that you want to transpile to this window and then press enter.");
             Console.WriteLine($"Or type \"s\" or \"select\" to choose a file in {Directory.GetCurrentDirectory()}.");
             string filePath;
             string input = Console.ReadLine();
             if (input.ToLower() == "s" || input.ToLower() == "select")
             {
                 if (!SelectFile(Directory.GetCurrentDirectory(), out string path))
-                    goto translate;
+                    goto transpile;
                 filePath = path;
             }
             else
@@ -62,12 +62,12 @@ namespace Code_Transpiler
                         throw new OperationCanceledException("Translation cancelled due to compile errors.");
                     Console.WriteLine("finished.");
                     Console.Write("Translating...");
-                    string translated = transpiler.Translate();
+                    string transpiled = transpiler.Transpile();
                     Console.WriteLine("finished.");
-                    Console.WriteLine("Translated code:");
+                    Console.WriteLine("Transpiled code:");
                     StringBuilder builder = new StringBuilder();
                     int i = 0;
-                    foreach (var line in translated.AsSpan().EnumerateLines())
+                    foreach (var line in transpiled.AsSpan().EnumerateLines())
                     {
                         if (line.IsWhiteSpace()) continue;
                         builder.Append($"{i,4}: ");
@@ -79,7 +79,7 @@ namespace Code_Transpiler
 
                     if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     {
-                        SetClipboard(translated);
+                        SetClipboard(transpiled);
                         Console.WriteLine("Code copied to clipboard.");
                     }
                 }
@@ -96,9 +96,9 @@ namespace Code_Transpiler
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
 
-            translateAgain:
-                Console.WriteLine($"\nPress enter to translate the file at {filePath}.");
-                Console.WriteLine("Or drop another file here and press enter to translate another file.");
+            transpileAgain:
+                Console.WriteLine($"\nPress enter to transpile the file at {filePath}.");
+                Console.WriteLine("Or drop another file here and press enter to transpile another file.");
                 bool dirExist = Directory.Exists(Path.GetDirectoryName(filePath));
                 if (dirExist)
                     Console.WriteLine($"Or type \"s\" or \"select\" to choose a file in {Path.GetDirectoryName(filePath)}.");
@@ -109,7 +109,7 @@ namespace Code_Transpiler
                 if (dirExist && (respond.ToLower() == "s" || respond.ToLower() == "select"))
                 {
                     if (!SelectFile(Path.GetDirectoryName(filePath), out string path))
-                        goto translateAgain;
+                        goto transpileAgain;
                     filePath = path;
                     continue;
                 }
@@ -155,7 +155,7 @@ namespace Code_Transpiler
 
             while (true)
             {
-                Console.WriteLine("Type the index of the file you want to translate then press enter.");
+                Console.WriteLine("Type the index of the file you want to transpile then press enter.");
                 Console.WriteLine("Or press enter to go back.");
                 string respond2 = Console.ReadLine();
                 if (string.IsNullOrWhiteSpace(respond2))
