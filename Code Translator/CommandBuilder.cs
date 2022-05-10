@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Code_Translator
+namespace Code_Transpiler
 {
     public class CommandBuilder : ICommandBuilder
     {

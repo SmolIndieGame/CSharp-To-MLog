@@ -1,7 +1,7 @@
 ﻿using Microsoft.CodeAnalysis.Operations;
 using System.Collections.Generic;
 
-namespace Code_Translator.OperationParsers
+namespace Code_Transpiler.OperationParsers
 {
     public class WhileLoopOperationParser : OperationParserBase<IWhileLoopOperation>
     {

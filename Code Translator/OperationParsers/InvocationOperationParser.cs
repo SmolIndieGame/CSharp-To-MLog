@@ -1,6 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
-using Code_Translator.InvocationParsers;
+using Code_Transpiler.InvocationParsers;
 using MindustryLogics;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace Code_Translator.OperationParsers
+namespace Code_Transpiler.OperationParsers
 {
     public interface IInvocationOperationParser
     {

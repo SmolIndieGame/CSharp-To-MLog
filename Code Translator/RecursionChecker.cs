@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Code_Translator
+namespace Code_Transpiler
 {
     internal class RecursionChecker
     {

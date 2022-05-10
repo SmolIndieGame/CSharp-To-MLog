@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="cs2ml icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!--<PackageReference Include="Microsoft.Build.Locator" Version="1.2.2" />-->
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="2.9.8" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.3.1" />
@@ -20,6 +24,7 @@
 
   <PropertyGroup>
     <InvariantGlobalization>true</InvariantGlobalization>
+    <ApplicationIcon>cs2ml icon.ico</ApplicationIcon>
   </PropertyGroup>
 
 </Project>

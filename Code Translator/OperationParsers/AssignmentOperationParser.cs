@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Code_Translator.OperationParsers
+namespace Code_Transpiler.OperationParsers
 {
     public class AssignmentOperationParser : OperationParserBase<IAssignmentOperation>
     {
@@ -15,10 +15,12 @@ namespace Code_Translator.OperationParsers
         public override string Parse(IAssignmentOperation operation, bool canBeInline, in string returnToVar)
         {
             string name = handler.Handle(operation.Target, true, null);
-
-            string @return = operation is ICompoundAssignmentOperation cao
-                ? handler.HandleBinary(cao.OperatorKind, cao.Target, cao.Value, canBeInline, name)
-                : handler.Handle(operation.Value, true, name);
+            string @return = operation switch
+            {
+                ICompoundAssignmentOperation cao => handler.HandleBinary(cao.OperatorKind, cao.Target, cao.Value, true, name),
+                ISimpleAssignmentOperation sao when !sao.IsRef => handler.Handle(sao.Value, true, name),
+                _ => throw CompilerHelper.Error(operation.Syntax, CompilationError.UnsupportedOperation, operation)
+            };
 
             if (@return == null)
                 throw CompilerHelper.Error(operation.Value.Syntax, CompilationError.NoReturnValue);

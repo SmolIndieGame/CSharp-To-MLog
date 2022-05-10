@@ -147,9 +147,14 @@ namespace MindustryLogics
         /// <item><term>270</term> <description>faces down</description></item>
         /// </list>
         /// </param>
-        /// <param name="config">The configuration of the building to build.</param>
+        /// <param name="config">
+        /// The building to copy from.<br/>
+        /// If the type of the building <paramref name="config"/> is same as <paramref name="buildingType"/>,<br/>
+        /// then the building to build will have the same properties as <paramref name="config"/>.<br/>
+        /// It is similar to a player pressing "f" on the building <paramref name="config"/> and placing it on (<paramref name="x"/>, <paramref name="y"/>).
+        /// </param>
         /// <inheritdoc cref="Mindustry.UnitRadar(RadarFilter, SortMethod, bool)" path="/remarks"/>
-        public static void Build(double x, double y, BuildingType buildingType, double rotation, object config) { }
+        public static void Build(double x, double y, BuildingType buildingType, double rotation, Building config) { }
 
         /// <summary>
         /// <para>

@@ -18,7 +18,7 @@ namespace MindustryLogics
     /// </code></para>
     /// </summary>
     /// <remarks>Deleting the credit of the translated code will break the program!<br/>
-    /// If you don't want credits, attach a <see cref="ExcludeCreditAttribute"/> at the top of the class.</remarks>
+    /// If you don't want the credit, attach a <see cref="ExcludeCreditAttribute"/> at the top of the class.</remarks>
     [AttributeUsage(AttributeTargets.Class, Inherited = true, AllowMultiple = true)]
     public sealed class CreditAttribute : Attribute
     {
@@ -33,17 +33,5 @@ namespace MindustryLogics
         /// The message to display.
         /// </summary>
         public string Credit { get; }
-    }
-
-    /// <summary>
-    /// Use this attribute to remove the credit at the top of the code.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Class, Inherited = true, AllowMultiple = false)]
-    public sealed class ExcludeCreditAttribute : Attribute
-    {
-        /// <inheritdoc cref="ExcludeCreditAttribute"/>
-        public ExcludeCreditAttribute()
-        {
-        }
     }
 }

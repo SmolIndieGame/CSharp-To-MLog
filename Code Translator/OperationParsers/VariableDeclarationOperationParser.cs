@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Code_Translator.OperationParsers
+namespace Code_Transpiler.OperationParsers
 {
     public class VariableDeclarationOperationParser : OperationParserBase<IVariableDeclarationOperation>
     {

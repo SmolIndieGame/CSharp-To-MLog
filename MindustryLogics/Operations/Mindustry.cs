@@ -264,6 +264,15 @@
         public static void UnitBind(UnitType unitType) { }
 
         /// <summary>
+        /// Set <see cref="BindingUnit"/> to the unit <paramref name="unit"/>.<br/>
+        /// So that <paramref name="unit"/> can be manipulated by Logics.<br/>
+        /// Useful if you want to manipulate two or more units at the same time.
+        /// </summary>
+        /// <param name="unit"></param>
+        /// <remarks>This method only works if <paramref name="unit"/> is an ally.</remarks>
+        public static void UnitBind(Unit unit) { }
+
+        /// <summary>
         /// <para>
         /// Locate units around the current bound unit.<br/>
         /// Unable to detect units outside the <see cref="Entity.Range"/> of the current bound unit.

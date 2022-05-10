@@ -3,6 +3,7 @@ using static MindustryLogics.Mindustry;
 using static MindustryLogics.UnitControl;
 using static MindustryLogics.Operation;
 using static MindustryLogics.Drawing;
+using System.Collections.Generic;
 
 [Credit("By SmolIndieGame aka hi*3")]
 class Test
@@ -411,7 +412,7 @@ class Test
         DrawFlush(GetLink(342798));
         DrawFlush(32);*/
 
-        int a = 1;
+        /*int a = 1;
         //bool tmp57768564674 = a == 0 || a == 1 || a == 2 && a == 3;
         if (a == 0 || a == 1 || a == 2 || a == 3)
         {
@@ -421,7 +422,9 @@ class Test
         {
             Print("Not");
         }
-        var b = GetLink(0);
+        var b = GetLink(0);*/
+
+        int a = 1;
     }
 
 

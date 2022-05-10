@@ -1,4 +1,4 @@
-﻿namespace Code_Translator
+﻿namespace Code_Transpiler
 {
     public interface ICommandBuilder
     {

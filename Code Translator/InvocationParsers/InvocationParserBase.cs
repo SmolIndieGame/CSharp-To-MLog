@@ -1,13 +1,13 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
-using Code_Translator.OperationParsers;
+using Code_Transpiler.OperationParsers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Code_Translator.InvocationParsers
+namespace Code_Transpiler.InvocationParsers
 {
     public abstract class InvocationParserBase : IInvocationParser
     {

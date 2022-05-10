@@ -12,6 +12,8 @@
         /// <summary>
         /// The entity is controlled by a processor.
         /// </summary>
+        /// <remarks>Using any operations that require <see cref="Mindustry.BindingUnit"/> will mark the unit as controlled by a processor,<br/>
+        /// if the unit is not controlled by a player.</remarks>
         CtrlProcessor,
         /// <summary>
         /// The entity is controlled by a player.

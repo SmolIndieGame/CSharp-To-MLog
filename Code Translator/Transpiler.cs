@@ -9,9 +9,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace Code_Translator
+namespace Code_Transpiler
 {
-    internal class Translator
+    internal class Transpiler
     {
         SyntaxTree syntaxTree;
         SemanticModel semanticModel;
@@ -28,7 +28,7 @@ namespace Code_Translator
 
         OperationHandler operationHandler;
 
-        public Translator()
+        public Transpiler()
         {
             List<MetadataReference> references = new List<MetadataReference>
             {
@@ -229,8 +229,8 @@ namespace Code_Translator
             output.AppendCommand($"jump {credits.Count + 4} always");
             foreach (var credit in credits)
                 output.AppendCommand($"print {credit}");
-            output.AppendCommand("print \"This code is translated from C# code.\"");
-            output.AppendCommand("print \"Check out the translator at\"");
+            output.AppendCommand("print \"This code is transpiled from C# code.\"");
+            output.AppendCommand("print \"Check out the transpiler at\"");
             output.AppendCommand("print \"https://github.com/SmolIndieGame/CSharp-To-MLog\"");
         }
     }

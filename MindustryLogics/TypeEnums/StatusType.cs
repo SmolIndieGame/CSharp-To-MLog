@@ -1,7 +1,7 @@
 ﻿namespace MindustryLogics
 {
     /// <summary>
-    /// The type of a status type.<br/>
+    /// The type of a status.<br/>
     /// Currently, the only usage of this enum is to pass it into <see cref="Mindustry.GetIcon(StatusType)"/>.
     /// </summary>
     public enum StatusType

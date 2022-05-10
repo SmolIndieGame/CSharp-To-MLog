@@ -2,7 +2,7 @@
 using Microsoft.CodeAnalysis.Operations;
 using System.Collections.Generic;
 
-namespace Code_Translator
+namespace Code_Transpiler
 {
     public interface IOperationHandler
     {
@@ -17,7 +17,6 @@ namespace Code_Translator
 
         string Handle(IOperation operation, bool canBeInline, in string returnToVar);
         string HandleBinary(BinaryOperatorKind operatorKind, IOperation leftOperand, IOperation rightOperand, bool canBeInline, in string returnToVar);
-        string HandleCondition(IOperation condition, IOperation whenTrue, IOperation whenFalse, in string returnToVar);
         void HandleJump(IOperation condition, string jumpToLine, bool jumpIf);
         void HandleLogicAndOr(IOperation leftOperand, IOperation rightOperand, string jumpTo, bool andOr, bool jumpIf);
         void OnMethodCalled(IMethodSymbol callee);

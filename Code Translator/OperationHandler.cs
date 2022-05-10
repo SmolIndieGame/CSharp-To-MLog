@@ -1,7 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Operations;
-using Code_Translator.OperationParsers;
+using Code_Transpiler.OperationParsers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Code_Translator
+namespace Code_Transpiler
 {
     public sealed class OperationHandler : IOperationHandler
     {
@@ -23,7 +23,6 @@ namespace Code_Translator
 
         public Dictionary<string, int> labelPos { get; }
         public int currentLoopIndent { get; set; }
-        int conditionIndent;
         int jumpIndent;
 
         readonly Dictionary<Type, IOperationParser> operations;
@@ -46,7 +45,6 @@ namespace Code_Translator
 
             labelPos = new Dictionary<string, int>();
             currentLoopIndent = 0;
-            conditionIndent = 0;
             jumpIndent = 0;
         }
 
@@ -59,7 +57,6 @@ namespace Code_Translator
 
             labelPos.Clear();
             currentLoopIndent = 0;
-            conditionIndent = 0;
             jumpIndent = 0;
         }
 
@@ -114,20 +111,6 @@ namespace Code_Translator
         public string HandleBinary(BinaryOperatorKind operatorKind, IOperation leftOperand, IOperation rightOperand, bool canBeInline, in string returnToVar)
         {
             StringBuilder builder = new StringBuilder("op");
-            if (operatorKind == BinaryOperatorKind.ConditionalAnd || operatorKind == BinaryOperatorKind.ConditionalOr)
-            {
-                if (!CompilerHelper.IsTempVar(returnToVar))
-                    output.AppendCommand($"set {returnToVar} 0");
-                HandleJump(rightOperand.Parent, CompilerHelper.VarInCommand(TempValueType.NotJump, (++jumpIndent).ToString()), false);
-                output.AppendCommand($"set {returnToVar} 1");
-                output.SetValueToVarInCommand(TempValueType.NotJump, jumpIndent--.ToString(), output.nextLineIndex.ToString());
-                return returnToVar;
-            }
-            /*if (operatorKind == BinaryOperatorKind.ConditionalOr)
-            {
-                output.AppendCommand($"set {returnToVar} 1");
-                return HandleCondition(leftOperand, null, rightOperand, returnToVar);
-            }*/
             if (operatorKind == BinaryOperatorKind.NotEquals)
             {
                 string lvalue = CompilerHelper.GetValueFromOperation(leftOperand);
@@ -174,38 +157,6 @@ namespace Code_Translator
                 output.SetValueToVarInCommand(TempValueType.NotJump, jumpIndent.ToString(), output.nextLineIndex.ToString());
                 jumpIndent--;
             }
-        }
-
-        public string HandleCondition(IOperation condition, IOperation whenTrue, IOperation whenFalse, in string returnToVar)
-        {
-            if (whenTrue == null && whenFalse == null) return returnToVar;
-
-            HandleJump(condition, CompilerHelper.VarInCommand(TempValueType.ConditionFalse, (++conditionIndent).ToString()), whenTrue == null);
-
-            string @return;
-            if (whenTrue == null)
-            {
-                @return = Handle(whenFalse, false, returnToVar);
-                output.SetValueToVarInCommand(TempValueType.ConditionFalse, (conditionIndent--).ToString(), output.nextLineIndex.ToString());
-                return @return;
-            }
-
-            if (whenFalse == null)
-            {
-                @return = Handle(whenTrue, false, returnToVar);
-                output.SetValueToVarInCommand(TempValueType.ConditionFalse, (conditionIndent--).ToString(), output.nextLineIndex.ToString());
-                return @return;
-            }
-
-            @return = Handle(whenTrue, false, returnToVar);
-            output.AppendCommand($"jump {CompilerHelper.VarInCommand(TempValueType.ConditionEnd, conditionIndent.ToString())} always");
-            output.SetValueToVarInCommand(TempValueType.ConditionFalse, conditionIndent.ToString(), output.nextLineIndex.ToString());
-
-            if (@return != Handle(whenFalse, false, returnToVar) && returnToVar != null)
-                throw CompilerHelper.Error(condition.Syntax, CompilationError.Unknown);
-            output.SetValueToVarInCommand(TempValueType.ConditionEnd, (conditionIndent--).ToString(), output.nextLineIndex.ToString());
-
-            return @return;
         }
 
         public void HandleJump(IOperation condition, string jumpToLine, bool jumpIf)
@@ -335,7 +286,7 @@ namespace Code_Translator
                 BinaryOperatorKind.LessThanOrEqual => "lessThanEq",
                 BinaryOperatorKind.GreaterThanOrEqual => "greaterThanEq",
                 BinaryOperatorKind.GreaterThan => "greaterThan",
-                _ => throw CompilerHelper.Error(rightOperand.Parent.Syntax, CompilationError.UnsupportedOperation, rightOperand.Parent)
+                _ => throw CompilerHelper.Error(rightOperand.Parent.Syntax, CompilationError.UnsupportedOperation, operatorKind)
             };
         }
 
