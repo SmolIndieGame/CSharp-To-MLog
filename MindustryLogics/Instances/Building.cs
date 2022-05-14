@@ -45,12 +45,12 @@ namespace MindustryLogics
 
         /// <inheritdoc cref="InfoType.Config"/>
         /// <remarks>Setter is not available on V6, if you are on V6, use <see cref="Configure"/> instead.</remarks>
-        public ItemType Config { get; set; }
+        public object Config { get; set; }
 
         /// <summary>
         /// Same as <see cref="Config"/>, but also works on V6.
         /// </summary>
-        public ItemType Configure { set => _ = value; }
+        public object Configure { set => _ = value; }
 
         /// <summary>
         /// Order this building to shoot or aim at location (<paramref name="x"/>, <paramref name="y"/>).

@@ -32,7 +32,8 @@
         public static int LinksCount { get; }
         /// <summary>
         /// <para>
-        /// The current bound <see cref="Unit"/>. It only changes when <see cref="UnitBind(UnitType)"/> is called.
+        /// The current bound <see cref="Unit"/>. It changes when <see cref="UnitBind(UnitType)"/> is called,<br/>
+        /// or set to null when <see cref="UnitControl.Unbind"/> is called.
         /// </para>
         /// <para>Logics can only manipulate the current bound unit (control, radar...).<br/>
         /// However, to sensor (get information about) a unit,<br/>
@@ -62,43 +63,47 @@
         /// Get the total count of <see cref="UnitType"/>.<br/>
         /// Useful for loops through all the <see cref="UnitType"/> with <see cref="Lookup(Content, int)"/>.
         /// </summary>
+        /// <remarks>Not available on V6.</remarks>
         public static int UnitCount { get; }
         /// <summary>
         /// Get the total count of <see cref="ItemType"/>.<br/>
         /// Useful for loops through all the <see cref="ItemType"/> with <see cref="Lookup(Content, int)"/>.
         /// </summary>
+        /// <remarks>Not available on V6.</remarks>
         public static int ItemCount { get; }
         /// <summary>
         /// Get the total count of <see cref="LiquidType"/>.<br/>
         /// Useful for loops through all the <see cref="LiquidType"/> with <see cref="Lookup(Content, int)"/>.
         /// </summary>
+        /// <remarks>Not available on V6.</remarks>
         public static int LiquidCount { get; }
         /// <summary>
         /// Get the total count of <see cref="BuildingType"/>.<br/>
         /// Useful for loops through all the <see cref="BuildingType"/> with <see cref="Lookup(Content, int)"/>.
         /// </summary>
+        /// <remarks>Not available on V6.</remarks>
         public static int BlockCount { get; }
         /// <inheritdoc cref="BlockCount"/>
         public static int BuildingCount { get; }
 
         /// <summary>
-        /// Read a number from a linked memory cell.
+        /// Read a number from a linked memory cell or bank.
         /// </summary>
         /// <param name="memoryCell">The memory cell to read from.</param>
         /// <param name="index">The index of the number to read from.</param>
         /// <returns></returns>
-        /// <remarks>Memory cells can only store numeric values.</remarks>
+        /// <remarks>Memory cells or banks can only store numeric values.</remarks>
         public static double Read(Building memoryCell, int index) => default;
 
         /// <summary>
-        /// Write a number to a linked memory cell.<br/>
+        /// Write a number to a linked memory cell or bank.<br/>
         /// Note that this method accepts <paramref name="value"/> as objects just to make it easier to work with booleans.<br/>
         /// Any object passed to this method will be converted to the numeric representation of that object.
         /// </summary>
         /// <param name="memoryCell">The memory cell to write to.</param>
         /// <param name="index">The index of the number to write to.</param>
         /// <param name="value">The number to write to the memory cell.</param>
-        /// <remarks>Memory cells can only store numeric values.</remarks>
+        /// <inheritdoc cref="Read(Building, int)" path="/remarks"/>
         public static void Write(object value, Building memoryCell, int index) { }
 
         /// <summary>
@@ -268,8 +273,8 @@
         /// So that <paramref name="unit"/> can be manipulated by Logics.<br/>
         /// Useful if you want to manipulate two or more units at the same time.
         /// </summary>
-        /// <param name="unit"></param>
-        /// <remarks>This method only works if <paramref name="unit"/> is an ally.</remarks>
+        /// <param name="unit">The ally unit to bind to.</param>
+        /// <remarks>This method only works if <paramref name="unit"/> is not null and is an ally.</remarks>
         public static void UnitBind(Unit unit) { }
 
         /// <summary>

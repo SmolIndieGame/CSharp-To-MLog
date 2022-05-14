@@ -216,8 +216,11 @@
         /// </summary>
         Enabled,
         /// <summary>
-        /// The configuration of the building.<br/>
-        /// Example: The item to sort of a sorter.
+        /// <para>The configuration of the building.</para>
+        /// <para>For <see cref="BuildingType.Sorter"/>, <see cref="BuildingType.Inverted_Sorter"/>, <see cref="BuildingType.Unloader"/>,<br/>
+        /// this is an <see cref="ItemType"/> that indicate which item to sort or unload.</para>
+        /// <para>For <see cref="BuildingType.Ground_Factory"/>, <see cref="BuildingType.Air_Factory"/>, <see cref="BuildingType.Naval_Factory"/>,<br/>
+        /// this is an <see cref="UnitType"/> that indicate which unit to produce.</para>
         /// </summary>
         Config
     }

@@ -184,5 +184,14 @@ namespace MindustryLogics
         /// <returns><see langword="true"/> if the unit is within the circle, <see langword="false"/> otherwise.</returns>
         /// <inheritdoc cref="Mindustry.UnitRadar(RadarFilter, SortMethod, bool)" path="/remarks"/>
         public static bool IsWithin(double x, double y, double r) => default;
+
+        /// <summary>
+        /// Unbind the current bound unit, making this logic no longer able to manipulate this unit.<br/>
+        /// Normally, an unit controlled by a processor will unbind after some time if the processor is no longer controlling it.<br/>
+        /// Calling this function will make the unit switch back to using the default unit AI instantly.
+        /// <para>Not available on V6.</para>
+        /// </summary>
+        /// <inheritdoc cref="Mindustry.UnitRadar(RadarFilter, SortMethod, bool)" path="/remarks"/>
+        public static void Unbind() { }
     }
 }
