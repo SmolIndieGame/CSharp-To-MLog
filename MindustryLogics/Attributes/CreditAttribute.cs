@@ -17,7 +17,7 @@ namespace MindustryLogics
     /// ...
     /// </code></para>
     /// </summary>
-    /// <remarks>Deleting the credit of the translated code will break the program!<br/>
+    /// <remarks>Deleting the credit of the transpiled code will break the program!<br/>
     /// If you don't want the credit, attach a <see cref="ExcludeCreditAttribute"/> at the top of the class.</remarks>
     [AttributeUsage(AttributeTargets.Class, Inherited = true, AllowMultiple = true)]
     public sealed class CreditAttribute : Attribute

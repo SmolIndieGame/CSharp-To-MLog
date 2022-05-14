@@ -7,18 +7,17 @@ using System.Threading.Tasks;
 namespace MindustryLogics
 {
     /// <summary>
-    /// <para>Use this attribute to write a message that will not be executed at the top of the code.<br/>
-    /// Attach multiple <see cref="CreditAttribute"/> to write multiple messages.</para>
+    /// <para>Use this attribute to let a linked building know what it is linked to.</para>
     /// <para>Example:<br/>
     /// <code>
-    /// [Credit("Author: &lt;yourname&gt;")]<br/>
-    /// class YourClass<br/>
-    /// {<br/>
     /// ...
-    /// </code></para>
+    /// [<see cref="LinkedToAttribute"/>(<see cref="BuildingType.Duo"/>, 27)]<br/>
+    /// <see langword="private"/> <see cref="LinkedBuilding"/> turret;
+    /// ...
+    /// </code>
+    /// Everytime the field turret is referenced, it will transpile to duo27.</para>
     /// </summary>
-    /// <remarks>Deleting the credit of the translated code will break the program!<br/>
-    /// If you don't want the credit, attach a <see cref="ExcludeCreditAttribute"/> at the top of the class.</remarks>
+    /// <inheritdoc cref="LinkedBuilding" path="/remarks"/>
     [AttributeUsage(AttributeTargets.Field, Inherited = true, AllowMultiple = false)]
     public sealed class LinkedToAttribute : Attribute
     {
