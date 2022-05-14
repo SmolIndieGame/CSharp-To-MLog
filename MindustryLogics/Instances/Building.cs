@@ -39,7 +39,7 @@ namespace MindustryLogics
         /// <inheritdoc cref="InfoType.Timescale"/>
         public double Timescale { get; }
         /// <inheritdoc cref="InfoType.Type"/>
-        public BuildingType Type { get; }
+        public abstract BuildingType Type { get; }
         /// <inheritdoc cref="InfoType.Enabled"/>
         public bool Enabled { get; set; }
 

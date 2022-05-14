@@ -21,6 +21,7 @@ namespace Code_Transpiler
         readonly Dictionary<IMethodSymbol, int> methodStartPos;
         readonly Dictionary<IMethodSymbol, int> methodIndices;
         readonly Dictionary<IParameterSymbol, int> funcArgIndices;
+        readonly Dictionary<string, string> linkedBuildings;
         readonly RecursionChecker recursionChecker;
         string className;
         IMethodSymbol entryPoint;
@@ -46,6 +47,7 @@ namespace Code_Transpiler
             methodStartPos = new Dictionary<IMethodSymbol, int>();
             methodIndices = new Dictionary<IMethodSymbol, int>();
             funcArgIndices = new Dictionary<IParameterSymbol, int>();
+            linkedBuildings = new Dictionary<string, string>();
             recursionChecker = new RecursionChecker();
 
             operationHandler = new OperationHandler(
@@ -53,6 +55,7 @@ namespace Code_Transpiler
                 methodStartPos,
                 methodIndices,
                 funcArgIndices,
+                linkedBuildings,
                 AddMethodCall);
         }
 
@@ -93,6 +96,7 @@ namespace Code_Transpiler
             methodStartPos.Clear();
             methodIndices.Clear();
             funcArgIndices.Clear();
+            linkedBuildings.Clear();
             recursionChecker.Reset();
 
             IEnumerable<SyntaxNode> allNodes = syntaxTree.GetCompilationUnitRoot().DescendantNodes();
@@ -114,8 +118,7 @@ namespace Code_Transpiler
             AppendCredit(@class);
 
             var fields = allNodes.OfType<FieldDeclarationSyntax>();
-            var declarations = fields.Select(n => n.Declaration);
-            foreach (var declaration in declarations)
+            foreach (var declaration in fields)
                 HandleFieldDeclaration(declaration);
 
             var ctors = allNodes.OfType<ConstructorDeclarationSyntax>();
@@ -184,20 +187,72 @@ namespace Code_Transpiler
                 output.AppendCommand($"set @counter ptr");
         }
 
-        void HandleFieldDeclaration(VariableDeclarationSyntax declaration)
+        void HandleFieldDeclaration(FieldDeclarationSyntax declaration)
         {
-            if (semanticModel.GetSymbolInfo(declaration.Type).Symbol is not ITypeSymbol typeSymbol)
-                throw CompilerHelper.Error(declaration, CompilationError.Unknown);
+            var varDec = declaration.Declaration;
+            if (semanticModel.GetSymbolInfo(varDec.Type).Symbol is not ITypeSymbol typeSymbol)
+                throw CompilerHelper.Error(varDec, CompilationError.Unknown);
+            if (typeSymbol.IsType<LinkedBuilding>())
+            {
+                HandleLinkedBuildingDeclaration(declaration);
+                return;
+            }
             if (!CompilerHelper.IsTypeAllowed(typeSymbol))
-                throw CompilerHelper.Error(declaration.Type, CompilationError.UnsupportedType);
+                throw CompilerHelper.Error(varDec.Type, CompilationError.UnsupportedType);
 
-            foreach (var v in declaration.Variables)
+            foreach (var v in varDec.Variables)
             {
                 if (semanticModel.GetDeclaredSymbol(v) is IFieldSymbol s && s.IsConst)
                     continue;
                 if (v.Initializer != null)
-                    throw CompilerHelper.Error(declaration, CompilationError.FieldInitialized);
-                //output.AppendCommand($"set _{v.Identifier.Text} null");
+                    throw CompilerHelper.Error(varDec, CompilationError.FieldInitialized);
+            }
+        }
+
+        void HandleLinkedBuildingDeclaration(FieldDeclarationSyntax declaration)
+        {
+            string name = null;
+            foreach (var attributeList in declaration.AttributeLists)
+                foreach (var attribute in attributeList.Attributes)
+                {
+                    if (semanticModel.GetSymbolInfo(attribute).Symbol.ContainingType is not ITypeSymbol s)
+                        throw CompilerHelper.Error(attribute, CompilationError.Unknown);
+                    if (s.IsType<LinkedToAttribute>())
+                    {
+                        string nam = null, idx = null;
+                        foreach (var argument in attribute.ArgumentList.Arguments)
+                        {
+                            var op = semanticModel.GetOperation(argument.Expression);
+                            string value = CompilerHelper.GetValueFromOperation(op);
+                            if (value == null)
+                                throw CompilerHelper.Error(argument, CompilationError.NotConstantValue);
+                            if (op.Type.IsType<BuildingType>())
+                            {
+                                if (value == "null")
+                                    throw CompilerHelper.Error(op.Syntax, CompilationError.NoneEnumLiteral);
+                                nam = value.Substring(Math.Max(1, value.LastIndexOf('-') + 1));
+                            }
+                            else
+                            {
+                                if (int.Parse(value) < 1)
+                                    throw CompilerHelper.Error(op.Syntax, CompilationError.InvalidLinkIndex);
+                                idx = value;
+                            }
+                        }
+
+                        name = nam + idx;
+                    }
+                }
+
+            if (name == null)
+                throw CompilerHelper.Error(declaration, CompilationError.NoLinkedTo);
+
+            foreach (var v in declaration.Declaration.Variables)
+            {
+                if (v.Initializer != null)
+                    throw CompilerHelper.Error(declaration.Declaration, CompilationError.SetLinkedBuilding);
+
+                linkedBuildings.Add(v.Identifier.Text, name);
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis.Operations;
+using MindustryLogics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,8 @@ namespace Code_Transpiler.OperationParsers
             {
                 if (CompilerHelper.IsReserved(declarator.Symbol.Name))
                     throw CompilerHelper.Error(operation.Syntax, CompilationError.ReservedVarName, declarator.Symbol.Name);
+                if (declarator.Symbol.Type.IsType<LinkedBuilding>())
+                    throw CompilerHelper.Error(operation.Syntax, CompilationError.DefineLinkedBuilding);
                 if (!CompilerHelper.IsTypeAllowed(declarator.Symbol.Type))
                     throw CompilerHelper.Error(operation.Syntax, CompilationError.UnsupportedType);
                 var initializer = declarator.GetVariableInitializer();

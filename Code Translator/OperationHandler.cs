@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using MindustryLogics;
 
 namespace Code_Transpiler
 {
@@ -17,6 +18,7 @@ namespace Code_Transpiler
         public Dictionary<IMethodSymbol, int> methodStartPos { get; }
         public Dictionary<IMethodSymbol, int> methodIndices { get; }
         public Dictionary<IParameterSymbol, int> funcArgIndices { get; }
+        readonly Dictionary<string, string> linkedBuildings;
         readonly Action<IMethodSymbol> onMethodCalled;
 
         public string className { get; private set; }
@@ -27,12 +29,13 @@ namespace Code_Transpiler
 
         readonly Dictionary<Type, IOperationParser> operations;
 
-        public OperationHandler(ICommandBuilder output, Dictionary<IMethodSymbol, int> methodStartPos, Dictionary<IMethodSymbol, int> methodIndices, Dictionary<IParameterSymbol, int> funcArgIndices, Action<IMethodSymbol> onMethodCalled)
+        public OperationHandler(ICommandBuilder output, Dictionary<IMethodSymbol, int> methodStartPos, Dictionary<IMethodSymbol, int> methodIndices, Dictionary<IParameterSymbol, int> funcArgIndices, Dictionary<string, string> linkedBuildings, Action<IMethodSymbol> onMethodCalled)
         {
             this.output = output;
             this.methodStartPos = methodStartPos;
             this.methodIndices = methodIndices;
             this.funcArgIndices = funcArgIndices;
+            this.linkedBuildings = linkedBuildings;
             this.onMethodCalled = onMethodCalled;
 
             operations = new Dictionary<Type, IOperationParser>();
@@ -228,7 +231,7 @@ namespace Code_Transpiler
             if (referenceOperation is ILocalReferenceOperation lro)
                 name = lro.Local.Name;
             else if (referenceOperation is IFieldReferenceOperation fro && fro.Field.ContainingType.Name == className)
-                name = $"${fro.Field.Name}";
+                name = fro.Field.Type.IsType<LinkedBuilding>() ? linkedBuildings[fro.Field.Name] : $"${fro.Field.Name}";
             else if (referenceOperation is IDiscardOperation)
                 name = "_";
             else if (referenceOperation is IParameterReferenceOperation pro)

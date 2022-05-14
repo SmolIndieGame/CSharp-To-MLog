@@ -33,6 +33,16 @@ namespace Code_Transpiler.OperationParsers
                 return returnToVar;
             }
 
+            if (CompilerHelper.IsType<LinkedBuilding>(fullName))
+            {
+                if (operation.Property.Name != nameof(LinkedBuilding.Name))
+                    throw CompilerHelper.Error(operation.Syntax, CompilationError.Unknown);
+                string @return = handler.Handle(operation.Instance, true, output.GetNewTempVar());
+                if (@return == null)
+                    throw CompilerHelper.Error(operation.Instance.Syntax, CompilationError.NoReturnValue);
+                return $"\"{@return}\"";
+            }
+
             if (fullName == typeof(Mindustry).FullName)
                 return MindustryProperty(operation, canBeInline, returnToVar);
 

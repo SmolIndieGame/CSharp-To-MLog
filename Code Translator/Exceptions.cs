@@ -35,6 +35,9 @@ namespace Code_Transpiler
         NullLiteral,
         ReferenceParameter,
         ClassModifier,
+        SetLinkedBuilding,
+        DefineLinkedBuilding,
+        NoLinkedTo,
         Unknown,
     }
 
@@ -77,6 +80,9 @@ namespace Code_Transpiler
                 CompilationError.NullLiteral => "Null is not allowed here.",
                 CompilationError.ReferenceParameter => "Reference parameter in user defined method is currently unsupported.",
                 CompilationError.ClassModifier => "Modifiers for the class to transpile is unsupported, declare the class as:\nclass {0} {{ }}",
+                CompilationError.SetLinkedBuilding => "Linked buildings cannot be set.",
+                CompilationError.DefineLinkedBuilding => "Linked buildings cannot be defined as a local variable, define it as a field instead.",
+                CompilationError.NoLinkedTo => "A LinkedToAttribute is needed to the declaration of variables of type LinkedBuilding.",
                 _ => error.ToString(),
             };
         }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
+using MindustryLogics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,9 @@ namespace Code_Transpiler.OperationParsers
 
         public override string Parse(IAssignmentOperation operation, bool canBeInline, in string returnToVar)
         {
+            if (operation.Target.Type.IsType<LinkedBuilding>())
+                throw CompilerHelper.Error(operation.Value.Syntax, CompilationError.SetLinkedBuilding);
+
             string name = handler.Handle(operation.Target, true, null);
             string @return = operation switch
             {
@@ -24,23 +28,24 @@ namespace Code_Transpiler.OperationParsers
 
             if (@return == null)
                 throw CompilerHelper.Error(operation.Value.Syntax, CompilationError.NoReturnValue);
-            
+
             if (operation.Target is IPropertyReferenceOperation o)
             {
                 GenericSetProperty(o, @return);
-                if (returnToVar != null && returnToVar != @return)
-                    output.AppendCommand($"set {returnToVar} {@return}");
+
+                if (canBeInline || returnToVar == null)
+                    return @return;
+                output.AppendCommand($"set {returnToVar} {@return}");
                 return returnToVar;
             }
 
             if (@return != name)
                 output.AppendCommand($"set {name} {@return}");
-            if (returnToVar != null && returnToVar != name)
-            {
-                output.AppendCommand($"set {returnToVar} {name}");
-                return returnToVar;
-            }
-            return name;
+
+            if (canBeInline || returnToVar == null || returnToVar == name)
+                return name;
+            output.AppendCommand($"set {returnToVar} {name}");
+            return returnToVar;
         }
 
         private void GenericSetProperty(IPropertyReferenceOperation operation, in string value)

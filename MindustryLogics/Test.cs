@@ -8,6 +8,9 @@ using System.Collections.Generic;
 [Credit("By SmolIndieGame aka hi*3")]
 class Test
 {
+    [LinkedTo(BuildingType.Duo, 27)]
+    LinkedBuilding mm;
+    [LinkedTo(BuildingType.Message, 1)]
     object yo;
     object ret;
     void Main()
@@ -425,6 +428,10 @@ class Test
         var b = GetLink(0);*/
 
         int a = 1;
+        mm.Config = UnitType.Dagger;
+        Print(mm.Ammo);
+        mm.Radar(null, SortMethod.MaxHealth, true);
+        _ = mm.Name;
     }
 
 
