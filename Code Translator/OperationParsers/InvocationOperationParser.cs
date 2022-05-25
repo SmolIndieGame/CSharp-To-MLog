@@ -22,6 +22,8 @@ namespace Code_Transpiler.OperationParsers
         readonly Dictionary<string, IInvocationParser> invocations;
         public Dictionary<IParameterSymbol, string> funcArgs { get; }
 
+        List<(string arg, string val)> argValue;
+
         public InvocationOperationParser(IOperationHandler handler, ICommandBuilder output) : base(handler, output)
         {
             invocations = new Dictionary<string, IInvocationParser>();
@@ -32,6 +34,7 @@ namespace Code_Transpiler.OperationParsers
                 invocations.Add(instance.methodFullName, instance);
             }
             funcArgs = new Dictionary<IParameterSymbol, string>();
+            argValue = new List<(string, string)>();
         }
 
         public override void Reset()
@@ -46,7 +49,11 @@ namespace Code_Transpiler.OperationParsers
             IMethodSymbol method = operation.TargetMethod;
             if (!method.ContainingNamespace.IsGlobalNamespace || method.ContainingType.Name != handler.className)
                 return HandleInvocation(operation, canBeInline, returnToVar);
+            return InvokeUserDefinedMethod(operation, method, returnToVar);
+        }
 
+        public string InvokeUserDefinedMethod(IInvocationOperation operation, IMethodSymbol method, in string returnToVar)
+        {
             handler.OnMethodCalled(method);
 
             string jumpTo;
@@ -63,19 +70,31 @@ namespace Code_Transpiler.OperationParsers
             {
                 if (!handler.funcArgIndices.ContainsKey(arg.Parameter))
                     handler.funcArgIndices.Add(arg.Parameter, handler.funcArgIndices.Count);
-                string argName = $"arg{handler.funcArgIndices[arg.Parameter]}";
-                handler.Handle(arg.Value, false, argName);
+                string argName = $"$$a{handler.funcArgIndices[arg.Parameter]}";
+                if (arg.Parameter.RefKind == RefKind.Out || arg.Parameter.RefKind == RefKind.Ref)
+                {
+                    IOperation argVal = arg.Value;
+                    if (argVal is IDeclarationExpressionOperation deo)
+                        argVal = deo.Expression;
+                    if (argVal.Type.IsType<LinkedBuilding>())
+                        throw CompilerHelper.Error(arg.Syntax, CompilationError.PassLinkedBuildingAsRef);
+                    string val = handler.GetVariableName(argVal);
+                    if (val != "_")
+                        argValue.Add((argName, val));
+                }
+                if (arg.Parameter.RefKind != RefKind.Out)
+                    handler.Handle(arg.Value, false, argName);
             }
 
-            string tmpVar = output.GetNewTempVar();
-            output.AppendCommand($"set {tmpVar} ptr");
-            output.AppendCommand($"set ptr {output.nextLineIndex + 2}");
+            output.AppendCommand($"set $$p{handler.methodIndices[method]} {output.nextLineIndex + 2}");
             output.AppendCommand($"jump {jumpTo} always");
-            output.AppendCommand($"set ptr {tmpVar}");
+            foreach (var val in argValue)
+                output.AppendCommand($"set {val.val} {val.arg}");
+            argValue.Clear();
 
             if (returnToVar != null && !method.ReturnsVoid)
             {
-                output.AppendCommand($"set {returnToVar} ret");
+                output.AppendCommand($"set {returnToVar} $$r");
                 return returnToVar;
             }
             return null;

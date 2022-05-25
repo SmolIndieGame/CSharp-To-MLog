@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿/*
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 using Code_Transpiler.OperationParsers;
 using MindustryLogics;
@@ -17,10 +18,11 @@ namespace Code_Transpiler.InvocationParsers
         }
 
         protected override Type methodContainingType => typeof(Mindustry);
-        protected override string methodName => nameof(Mindustry.GetIcon);
+        protected override string methodName => throw new NotImplementedException();
 
         public override string Parse(IInvocationOperation operation, bool canBeInline, in string returnToVar)
         {
+            throw CompilerHelper.Error(operation.Syntax, CompilationError.UnsupportedInvocation);
             uint tmp;
             Span<byte> bytes = stackalloc byte[2];
 
@@ -55,3 +57,4 @@ namespace Code_Transpiler.InvocationParsers
         }
     }
 }
+*/

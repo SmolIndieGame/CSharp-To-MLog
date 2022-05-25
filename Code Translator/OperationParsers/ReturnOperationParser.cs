@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis.Operations;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Operations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,8 +17,8 @@ namespace Code_Transpiler.OperationParsers
         public override string Parse(IReturnOperation operation, bool canBeInline, in string returnToVar)
         {
             if (operation.ReturnedValue != null)
-                handler.Handle(operation.ReturnedValue, false, "ret");
-            output.AppendCommand($"set @counter ptr");
+                handler.Handle(operation.ReturnedValue, false, "$$r");
+            output.AppendCommand($"set @counter $$p{handler.methodIndices[handler.GetCurrentMethod()]}");
             return null;
         }
     }

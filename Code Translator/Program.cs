@@ -11,9 +11,6 @@ namespace Code_Transpiler
     {
         // TODO: write unit test for all operation parser and operation handler and invocation parser
         // TODO: make tutorial and add doc to readme.md
-        // TODO: make transpiler reserved variable name start with $$
-        // TODO: make 'jump to ptr' unique to each function to reduce custom function call's costs.
-        // TODO: add LinkRef
 
         // TODO: make condition break, continue, goto and function calls
         // TODO: add support for custom enum
@@ -21,6 +18,7 @@ namespace Code_Transpiler
         // TODO: add support for foreach loop
         // TODO: add cellArray and cellStack
         // TODO: add support for switch statement
+        // TODO: change content types from enum to class
 
         [STAThread]
         static void Main(string[] args)
@@ -52,7 +50,7 @@ namespace Code_Transpiler
                 {
                     string source = File.ReadAllText(filePath);
                     Console.WriteLine("Original code:");
-                    Console.WriteLine(source);
+                    WriteToConsoleWithLineNumber(source, true);
                     Console.WriteLine();
                     Console.Write("Analysing syntax...");
                     transpiler.SetSource(source);
@@ -65,17 +63,7 @@ namespace Code_Transpiler
                     string transpiled = transpiler.Transpile();
                     Console.WriteLine("finished.");
                     Console.WriteLine("Transpiled code:");
-                    StringBuilder builder = new StringBuilder();
-                    int i = 0;
-                    foreach (var line in transpiled.AsSpan().EnumerateLines())
-                    {
-                        if (line.IsWhiteSpace()) continue;
-                        builder.Append($"{i,4}: ");
-                        builder.Append(line);
-                        builder.AppendLine();
-                        i++;
-                    }
-                    Console.Write(builder);
+                    WriteToConsoleWithLineNumber(transpiled);
 
                     if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     {
@@ -116,6 +104,21 @@ namespace Code_Transpiler
 
                 filePath = respond.Trim('"');
             }
+        }
+
+        private static void WriteToConsoleWithLineNumber(string text, bool offsetOne = false)
+        {
+            StringBuilder builder = new();
+            int i = offsetOne ? 1 : 0;
+            foreach (var line in text.AsSpan().Trim().EnumerateLines())
+            {
+                builder.AppendFormat("{0,4}", i);
+                builder.Append(": ");
+                builder.Append(line);
+                builder.AppendLine();
+                i++;
+            }
+            Console.Write(builder);
         }
 
         /*private static string GetFile(string initPath)

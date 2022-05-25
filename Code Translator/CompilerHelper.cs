@@ -16,10 +16,6 @@ namespace Code_Transpiler
         public static bool IsTypeAllowed(ITypeSymbol type, bool allowVoid = false) => Service.IsTypeAllowed(type, allowVoid);
         public static string GetValueFromOperation(IOperation operation) => Service.GetValueFromOperation(operation);
         public static int? GetIntValueFromEnumLiteral(IOperation operation) => Service.GetIntValueFromEnumLiteral(operation);
-        /// <summary>
-        /// Is the variable name varName reserved for compiler usage?
-        /// </summary>
-        public static bool IsReserved(string varName) => Service.IsReserved(varName);
         public static bool IsTempVar(string varName) => Service.IsTempVar(varName);
         public static SymbolDisplayFormat FullNameFormat => Service.FullNameFormat;
         public static bool IsType<T>(this ITypeSymbol symbol) => Service.IsType<T>(symbol);

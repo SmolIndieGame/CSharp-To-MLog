@@ -24,6 +24,7 @@ namespace Code_Transpiler
         readonly Dictionary<string, string> linkedBuildings;
         readonly RecursionChecker recursionChecker;
         string className;
+        IMethodSymbol ctorMethod;
         IMethodSymbol entryPoint;
         IMethodSymbol currentMethod;
 
@@ -56,7 +57,8 @@ namespace Code_Transpiler
                 methodIndices,
                 funcArgIndices,
                 linkedBuildings,
-                AddMethodCall);
+                AddMethodCall,
+                () => currentMethod);
         }
 
         public void SetSource(string source)
@@ -98,6 +100,7 @@ namespace Code_Transpiler
             funcArgIndices.Clear();
             linkedBuildings.Clear();
             recursionChecker.Reset();
+            ctorMethod = null;
 
             IEnumerable<SyntaxNode> allNodes = syntaxTree.GetCompilationUnitRoot().DescendantNodes();
 
@@ -130,10 +133,15 @@ namespace Code_Transpiler
             var ctor = ctors.FirstOrDefault();
             if (ctor != null)
             {
+                currentMethod = semanticModel.GetDeclaredSymbol(ctor);
                 if (ctor.ParameterList.Parameters.Count > 0)
                     throw CompilerHelper.Error(ctor, CompilationError.ParameterizedConstructor);
 
+                methodIndices.Add(currentMethod, methodIndices.Count);
+                output.AppendCommand($"set $$p{methodIndices[currentMethod]} {CompilerHelper.VarInCommand(TempValueType.Function, methodIndices[currentMethod].ToString())}");
                 operationHandler.Handle(semanticModel.GetOperation((SyntaxNode)ctor.Body ?? ctor.ExpressionBody), false, null);
+                output.SetValueToVarInCommand(TempValueType.Function, methodIndices[currentMethod].ToString(), output.nextLineIndex.ToString());
+                ctorMethod = currentMethod;
             }
 
             var allMethods = allNodes.OfType<MethodDeclarationSyntax>();
@@ -147,13 +155,16 @@ namespace Code_Transpiler
             if (main.ParameterList.Parameters.Count > 0)
                 throw CompilerHelper.Error(main, CompilationError.ParameterizedMainEntry);
 
-            output.AppendCommand($"set ptr {output.nextLineIndex + 1}");
+            output.AppendCommand($"set $$p{methodIndices.Count} {output.nextLineIndex + 1}");
             HandleMethodDeclaration(main);
             entryPoint = currentMethod;
 
             foreach (var method in allMethods)
                 if (method != main)
                     HandleMethodDeclaration(method);
+
+            if (ctorMethod != null && recursionChecker.IsRecursive(ctorMethod))
+                throw CompilerHelper.Error(null, CompilationError.Recursion);
 
             if (recursionChecker.IsRecursive(entryPoint))
                 throw CompilerHelper.Error(null, CompilationError.Recursion);
@@ -165,26 +176,26 @@ namespace Code_Transpiler
         {
             currentMethod = semanticModel.GetDeclaredSymbol(declaration);
             if (!CompilerHelper.IsTypeAllowed(currentMethod.ReturnType, true))
-                throw CompilerHelper.Error(declaration, CompilationError.UnsupportedType);
-            
-            foreach (var param in currentMethod.Parameters)
+                throw CompilerHelper.Error(declaration.ReturnType, CompilationError.UnsupportedType);
+            if (currentMethod.RefKind != RefKind.None)
+                throw CompilerHelper.Error(declaration.ReturnType, CompilationError.ReferenceReturn);
+
+            for (int i = 0; i < currentMethod.Parameters.Length; i++)
             {
-                if (!CompilerHelper.IsTypeAllowed(param.Type))
-                    throw CompilerHelper.Error(declaration, CompilationError.UnsupportedType);
-                if (param.RefKind != RefKind.None)
-                    throw CompilerHelper.Error(declaration, CompilationError.ReferenceParameter);
-                if (!funcArgIndices.ContainsKey(param))
-                    funcArgIndices.Add(param, funcArgIndices.Count);
+                if (!CompilerHelper.IsTypeAllowed(currentMethod.Parameters[i].Type))
+                    throw CompilerHelper.Error(declaration.ParameterList.Parameters[i], CompilationError.UnsupportedType);
+                if (!funcArgIndices.ContainsKey(currentMethod.Parameters[i]))
+                    funcArgIndices.Add(currentMethod.Parameters[i], funcArgIndices.Count);
             }
 
             methodStartPos.Add(currentMethod, output.nextLineIndex);
             if (methodIndices.TryGetValue(currentMethod, out int index))
                 output.SetValueToVarInCommand(TempValueType.Function, index.ToString(), output.nextLineIndex.ToString());
-            //w w = new w();
-            //w.Visit(semanticModel.GetOperation(declaration.Body as SyntaxNode ?? declaration.ExpressionBody));
+            else
+                methodIndices.Add(currentMethod, methodIndices.Count);
             operationHandler.Handle(semanticModel.GetOperation(declaration.Body as SyntaxNode ?? declaration.ExpressionBody), false, null);
             if (currentMethod.ReturnType.SpecialType == SpecialType.System_Void)
-                output.AppendCommand($"set @counter ptr");
+                output.AppendCommand($"set @counter $$p{methodIndices[currentMethod]}");
         }
 
         void HandleFieldDeclaration(FieldDeclarationSyntax declaration)

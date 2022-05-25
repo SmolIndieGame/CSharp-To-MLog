@@ -24,7 +24,6 @@ namespace Code_Transpiler
         Exception Error(SyntaxNode node, CompilationError error, params object[] args);
         int? GetIntValueFromEnumLiteral(IOperation operation);
         string GetValueFromOperation(IOperation operation);
-        bool IsReserved(string varName);
         bool IsTempVar(string varName);
         bool IsType<T>(string fullName);
         bool IsType<T>(ITypeSymbol symbol);
@@ -112,7 +111,9 @@ namespace Code_Transpiler
 
                 string fullName = operation.Type.ToDisplayString(FullNameFormat);
                 if (fullName == typeof(InfoType).FullName)
-                    return GetInfoTypeValue((InfoType)operation.ConstantValue.Value);
+                    return GetCamelValueFromEnum(typeof(InfoType), operation.ConstantValue.Value);
+                if (fullName == typeof(ControlType).FullName)
+                    return GetCamelValueFromEnum(typeof(ControlType), operation.ConstantValue.Value);
                 foreach (var item in typeEnums)
                     if (fullName == item.FullName)
                         return GetTypeValueFromEnum(item, operation.ConstantValue.Value);
@@ -128,7 +129,7 @@ namespace Code_Transpiler
             if (operation.Type.SpecialType == SpecialType.System_Boolean)
                 return (bool)operation.ConstantValue.Value ? "true" : "false";
 
-            if (operation.Type.SpecialType == SpecialType.System_String)
+            if (operation.Type.SpecialType == SpecialType.System_String && operation.ConstantValue.Value != null)
             {
                 string value = operation.ConstantValue.Value.ToString();
                 if (value.Contains('"'))
@@ -153,32 +154,34 @@ namespace Code_Transpiler
 
         string GetTypeValueFromEnum(Type enumType, object value)
         {
-            if (Convert.ToInt32(value) == 0)
+            string val = Enum.GetName(enumType, value);
+            if (Convert.ToInt32(value) == 0 || val == null)
                 return "null";
-            return "@" + Enum.GetName(enumType, value).ToLower().Replace('_', '-');
+            return "@" + val.ToLower().Replace('_', '-');
         }
 
-        string GetInfoTypeValue(InfoType @enum)
+        string GetCamelValueFromEnum(Type enumType, object value)
         {
-            if (@enum == InfoType.None)
-                return "0";
-            string name = @enum.ToString();
-            return $"@{char.ToLower(name[0])}{name.Substring(1)}";
+            string val = Enum.GetName(enumType, value);
+            if (Convert.ToInt32(value) == 0 || val == null)
+                return "null";
+            return $"@{char.ToLower(val[0])}{val.Substring(1)}";
         }
 
         /// <summary>
         /// Is the variable name varName reserved for compiler usage?
         /// </summary>
-        public bool IsReserved(string varName)
+        /*public bool IsReserved(string varName)
         {
-            return varName == "ret" || varName == "ptr"
-                || varName.StartsWith("tmp") && int.TryParse(varName.AsSpan(3), out _)
-                || varName.StartsWith("arg") && int.TryParse(varName.AsSpan(3), out _);
-        }
+            return varName == "$$r"                                                         //return
+                || varName.StartsWith("$$p") && int.TryParse(varName.AsSpan(3), out _)      //pointer
+                || varName.StartsWith("$$t") && int.TryParse(varName.AsSpan(3), out _)      //temporary
+                || varName.StartsWith("$$a") && int.TryParse(varName.AsSpan(3), out _);     //argument
+        }*/
 
         public bool IsTempVar(string varName)
         {
-            return varName.StartsWith("tmp") && int.TryParse(varName.AsSpan(3), out _);
+            return varName.StartsWith("$$t") && int.TryParse(varName.AsSpan(3), out _);
         }
 
         public SymbolDisplayFormat FullNameFormat { get; }

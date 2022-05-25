@@ -12,7 +12,7 @@ using System.Reflection;
 using System.Text;
 using Xunit;
 
-namespace Code_Translator.Tests
+namespace Code_Transpiler.Tests
 {
     public class OperationHeandlerTests
     {
@@ -22,7 +22,14 @@ namespace Code_Translator.Tests
         public OperationHeandlerTests()
         {
             commandBuilderMock = new Mock<ICommandBuilder>();
-            sut = new OperationHandler(commandBuilderMock.Object, new System.Collections.Generic.Dictionary<Microsoft.CodeAnalysis.IMethodSymbol, int>(), new System.Collections.Generic.Dictionary<Microsoft.CodeAnalysis.IMethodSymbol, int>(), new System.Collections.Generic.Dictionary<Microsoft.CodeAnalysis.IParameterSymbol, int>(), null);
+            sut = new OperationHandler(
+                commandBuilderMock.Object,
+                new Dictionary<IMethodSymbol, int>(),
+                new Dictionary<IMethodSymbol, int>(),
+                new Dictionary<IParameterSymbol, int>(),
+                new Dictionary<string, string>(),
+                null,
+                null);
         }
 
         [Fact]
@@ -99,6 +106,107 @@ namespace Code_Translator.Tests
             var ret = sut.HandleBinary(BinaryOperatorKind.NotEquals, leftOp, rightOp, true, "_");
 
             Assert.Equal(variable, ret);
+            commandBuilderMock.VerifyNoOtherCalls();
+            commandBuilderMock.Reset();
+        }
+
+        [Fact]
+        public void HandleJump_ShouldJump_WhenJumpIfIsTrue()
+        {
+            string op = "op";
+            string jumpTo = "to";
+            string expected = $"jump {jumpTo} notEqual {op} 0";
+
+            var ope = new Mock<IOperation>().Object;
+
+            var helperMock = new Mock<ICompilerHelperService>();
+            helperMock.Setup(x => x.GetValueFromOperation(ope)).Returns(op);
+            CompilerHelper.Service = helperMock.Object;
+
+            sut.HandleJump(ope, jumpTo, true);
+
+            commandBuilderMock.Verify(x => x.GetNewTempVar());
+            commandBuilderMock.Verify(x => x.AppendCommand(expected));
+            commandBuilderMock.VerifyNoOtherCalls();
+            commandBuilderMock.Reset();
+        }
+
+        [Fact]
+        public void HandleJump_ShouldJump_WhenJumpIfIsFalse()
+        {
+            string op = "op";
+            string jumpTo = "to";
+            string expected = $"jump {jumpTo} equal {op} 0";
+
+            var ope = new Mock<IOperation>().Object;
+
+            var helperMock = new Mock<ICompilerHelperService>();
+            helperMock.Setup(x => x.GetValueFromOperation(ope)).Returns(op);
+            CompilerHelper.Service = helperMock.Object;
+
+            sut.HandleJump(ope, jumpTo, false);
+
+            commandBuilderMock.Verify(x => x.GetNewTempVar());
+            commandBuilderMock.Verify(x => x.AppendCommand(expected));
+            commandBuilderMock.VerifyNoOtherCalls();
+            commandBuilderMock.Reset();
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void HandleJump_ShouldJump_WhenBinary(bool jumpIf)
+        {
+            string op1 = "op1";
+            string op2 = "op2";
+            string jumpTo = "to";
+            string opCode = jumpIf ? "lessThan" : "greaterThanEq";
+            string expected = $"jump {jumpTo} {opCode} {op1} {op2}";
+
+            var ope1 = new Mock<IOperation>().Object;
+            var ope2 = new Mock<IOperation>().Object;
+
+            var opMock = new Mock<IBinaryOperation>();
+            opMock.SetupGet(x => x.OperatorKind).Returns(BinaryOperatorKind.LessThan);
+            opMock.SetupGet(x => x.LeftOperand).Returns(ope1);
+            opMock.SetupGet(x => x.RightOperand).Returns(ope2);
+            var op = opMock.Object;
+
+            var helperMock = new Mock<ICompilerHelperService>();
+            helperMock.Setup(x => x.GetValueFromOperation(ope1)).Returns(op1);
+            helperMock.Setup(x => x.GetValueFromOperation(ope2)).Returns(op2);
+            CompilerHelper.Service = helperMock.Object;
+
+            sut.HandleJump(op, jumpTo, jumpIf);
+
+            commandBuilderMock.Verify(x => x.GetNewTempVar());
+            commandBuilderMock.Verify(x => x.AppendCommand(expected));
+            commandBuilderMock.VerifyNoOtherCalls();
+            commandBuilderMock.Reset();
+        }
+
+        [Fact]
+        public void HandleJump_ShouldInvert_WhenUnaryNot()
+        {
+            string op = "op";
+            string jumpTo = "to";
+            string expected = $"jump {jumpTo} equal {op} 0";
+
+            var opIn = new Mock<IOperation>().Object;
+
+            var opMock = new Mock<IUnaryOperation>();
+            opMock.SetupGet(x => x.OperatorKind).Returns(UnaryOperatorKind.Not);
+            opMock.SetupGet(x => x.Operand).Returns(opIn);
+            var ope = opMock.Object;
+
+            var helperMock = new Mock<ICompilerHelperService>();
+            helperMock.Setup(x => x.GetValueFromOperation(opIn)).Returns(op);
+            CompilerHelper.Service = helperMock.Object;
+
+            sut.HandleJump(ope, jumpTo, true);
+
+            commandBuilderMock.Verify(x => x.GetNewTempVar());
+            commandBuilderMock.Verify(x => x.AppendCommand(expected));
             commandBuilderMock.VerifyNoOtherCalls();
             commandBuilderMock.Reset();
         }

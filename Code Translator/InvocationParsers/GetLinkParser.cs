@@ -27,17 +27,20 @@ namespace Code_Transpiler.InvocationParsers
             string name = null, idx = null;
             foreach (var op in operation.Arguments)
             {
-                string value = CompilerHelper.GetValueFromOperation(op.Value);
-                if (value == null)
-                    throw CompilerHelper.Error(op.Syntax, CompilationError.NotConstantValue);
                 if (op.Parameter.Type.IsType<BuildingType>())
                 {
-                    if (value == "null")
-                        throw CompilerHelper.Error(op.Syntax, CompilationError.NoneEnumLiteral);
+                    string value = handler.Handle(op.Value, true, output.GetNewTempVar());
+                    if (value == "null" || value == "@solid")
+                        throw CompilerHelper.Error(op.Syntax, CompilationError.InvalidArgument, methodFullName);
+                    if (!value.StartsWith("@"))
+                        throw CompilerHelper.Error(op.Syntax, CompilationError.NotConstantValue);
                     name = value.Substring(Math.Max(1, value.LastIndexOf('-') + 1));
                 }
                 else
                 {
+                    string value = CompilerHelper.GetValueFromOperation(op.Value);
+                    if (value == null)
+                        throw CompilerHelper.Error(op.Syntax, CompilationError.NotConstantValue);
                     if (int.Parse(value) < 1)
                         throw CompilerHelper.Error(op.Syntax, CompilationError.InvalidLinkIndex);
                     idx = value;

@@ -20,6 +20,7 @@ namespace Code_Transpiler
         public Dictionary<IParameterSymbol, int> funcArgIndices { get; }
         readonly Dictionary<string, string> linkedBuildings;
         readonly Action<IMethodSymbol> onMethodCalled;
+        readonly Func<IMethodSymbol> getCurrentMethod;
 
         public string className { get; private set; }
 
@@ -29,7 +30,7 @@ namespace Code_Transpiler
 
         readonly Dictionary<Type, IOperationParser> operations;
 
-        public OperationHandler(ICommandBuilder output, Dictionary<IMethodSymbol, int> methodStartPos, Dictionary<IMethodSymbol, int> methodIndices, Dictionary<IParameterSymbol, int> funcArgIndices, Dictionary<string, string> linkedBuildings, Action<IMethodSymbol> onMethodCalled)
+        public OperationHandler(ICommandBuilder output, Dictionary<IMethodSymbol, int> methodStartPos, Dictionary<IMethodSymbol, int> methodIndices, Dictionary<IParameterSymbol, int> funcArgIndices, Dictionary<string, string> linkedBuildings, Action<IMethodSymbol> onMethodCalled, Func<IMethodSymbol> getCurrentMethod)
         {
             this.output = output;
             this.methodStartPos = methodStartPos;
@@ -37,6 +38,7 @@ namespace Code_Transpiler
             this.funcArgIndices = funcArgIndices;
             this.linkedBuildings = linkedBuildings;
             this.onMethodCalled = onMethodCalled;
+            this.getCurrentMethod = getCurrentMethod;
 
             operations = new Dictionary<Type, IOperationParser>();
             Type[] alltypes = Assembly.GetExecutingAssembly().GetTypes();
@@ -90,6 +92,8 @@ namespace Code_Transpiler
                 case IConversionOperation o:
                     if (o.Operand.Type.IsTypeEnum() && o.Type.SpecialType != SpecialType.System_Object)
                         throw CompilerHelper.Error(o.Syntax, CompilationError.CastingEnum);
+                    if (o.Operand.Type.SpecialType != SpecialType.System_Object && o.Type.IsTypeEnum())
+                        throw CompilerHelper.Error(o.Syntax, CompilationError.CastToEnum);
                     return Handle(o.Operand, canBeInline, returnToVar);
                 case IInstanceReferenceOperation o:
                     if (o.ReferenceKind != InstanceReferenceKind.ContainingTypeInstance)
@@ -131,6 +135,21 @@ namespace Code_Transpiler
                     return returnToVar;
                 }
             }
+
+            if (operatorKind == BinaryOperatorKind.Add)
+            {
+                var lType = leftOperand.Type?.SpecialType;
+                var rType = rightOperand.Type?.SpecialType;
+                if (lType == SpecialType.System_String || rType == SpecialType.System_String)
+                    throw CompilerHelper.Error(rightOperand.Parent.Syntax, CompilationError.StringAddition);
+            }
+
+            if (leftOperand.Type.IsTypeEnum()
+                && (operatorKind == BinaryOperatorKind.Subtract
+                || operatorKind == BinaryOperatorKind.And
+                || operatorKind == BinaryOperatorKind.Or
+                || operatorKind == BinaryOperatorKind.ExclusiveOr))
+                throw CompilerHelper.Error(leftOperand.Parent.Syntax, CompilationError.OperationWithEnum);
 
             builder.Append(' ');
             builder.Append(GetOperatorString(operatorKind, leftOperand, rightOperand));
@@ -225,7 +244,7 @@ namespace Code_Transpiler
             output.AppendCommand($"jump {jumpToLine} {(jumpIf ? "notEqual" : "equal")} {@return} 0");
         }
 
-        string GetVariableName(IOperation referenceOperation)
+        public string GetVariableName(IOperation referenceOperation)
         {
             string name;
             if (referenceOperation is ILocalReferenceOperation lro)
@@ -238,7 +257,7 @@ namespace Code_Transpiler
             {
                 if (!funcArgIndices.ContainsKey(pro.Parameter))
                     throw CompilerHelper.Error(pro.Syntax, CompilationError.Unknown);
-                name = $"arg{funcArgIndices[pro.Parameter]}";
+                name = $"$$a{funcArgIndices[pro.Parameter]}";
             }
             else
                 throw CompilerHelper.Error(referenceOperation.Syntax, CompilationError.UnsupportedOperation, referenceOperation);
@@ -247,14 +266,6 @@ namespace Code_Transpiler
 
         private static string GetOperatorString(BinaryOperatorKind operatorKind, IOperation leftOperand, IOperation rightOperand)
         {
-            if (operatorKind == BinaryOperatorKind.Add)
-            {
-                var lType = leftOperand.Type?.SpecialType;
-                var rType = rightOperand.Type?.SpecialType;
-                if (lType == SpecialType.System_String || rType == SpecialType.System_String)
-                    throw CompilerHelper.Error(rightOperand.Parent.Syntax, CompilationError.StringAddition);
-            }
-
             if (operatorKind == BinaryOperatorKind.Divide)
             {
                 var lType = leftOperand.Type?.SpecialType;
@@ -302,9 +313,7 @@ namespace Code_Transpiler
             return string.Concat(" ", @return);
         }
 
-        public void OnMethodCalled(IMethodSymbol callee)
-        {
-            onMethodCalled?.Invoke(callee);
-        }
+        public void OnMethodCalled(IMethodSymbol callee) => onMethodCalled?.Invoke(callee);
+        public IMethodSymbol GetCurrentMethod() => getCurrentMethod();
     }
 }

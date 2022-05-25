@@ -161,7 +161,7 @@
         /// <para>Get a linked building by its name.</para>
         /// <para><c><see cref="Mindustry"/>.GetLink(<see cref="BuildingType.Force_Projector"/>, 2)</c> will return projector2.</para>
         /// </summary>
-        /// <param name="buildingType">The type of the building.<br/>Only constant <see cref="BuildingType"/> is accepted.</param>
+        /// <param name="buildingType">The type of the building.<br/>User defined variable is not accepted here.</param>
         /// <param name="index">The index of the linked building. (starts at 1)<br/>Only constant <see cref="int"/> is accepted.</param>
         /// <returns></returns>
         /// <remarks>Only constant values are allowed to pass into this function.</remarks>
@@ -182,6 +182,7 @@
         /// <remarks>The return type automatically include the @ sign.<br/>Only constant values are allowed to pass into this function.</remarks>
         public static object CustomType(string typeName) => default;
 
+        /*
         /// <summary>
         /// Get the commonly used icon of type <paramref name="type"/>.<br/>
         /// For more icons use the string literal "\uXXXX" where XXXX is a hex number representing a Unicode character.<br/>
@@ -202,6 +203,7 @@
         public static string GetIcon(BuildingType type) => default;
         /// <inheritdoc cref="GetIcon(ItemType)"/>
         public static string GetIcon(StatusType type) => default;
+        */
 
         /// <summary>
         /// Get the information of type <paramref name="info"/> about an <see cref="Entity"/>.<br/>

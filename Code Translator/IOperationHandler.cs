@@ -15,6 +15,8 @@ namespace Code_Transpiler
         Dictionary<string, int> labelPos { get; }
         int currentLoopIndent { get; set; }
 
+        IMethodSymbol GetCurrentMethod();
+        string GetVariableName(IOperation referenceOperation);
         string Handle(IOperation operation, bool canBeInline, in string returnToVar);
         string HandleBinary(BinaryOperatorKind operatorKind, IOperation leftOperand, IOperation rightOperand, bool canBeInline, in string returnToVar);
         void HandleJump(IOperation condition, string jumpToLine, bool jumpIf);

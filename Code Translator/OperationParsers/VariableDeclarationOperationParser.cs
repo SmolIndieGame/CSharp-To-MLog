@@ -18,8 +18,6 @@ namespace Code_Transpiler.OperationParsers
         {
             foreach (var declarator in operation.Declarators)
             {
-                if (CompilerHelper.IsReserved(declarator.Symbol.Name))
-                    throw CompilerHelper.Error(operation.Syntax, CompilationError.ReservedVarName, declarator.Symbol.Name);
                 if (declarator.Symbol.Type.IsType<LinkedBuilding>())
                     throw CompilerHelper.Error(operation.Syntax, CompilationError.DefineLinkedBuilding);
                 if (!CompilerHelper.IsTypeAllowed(declarator.Symbol.Type))

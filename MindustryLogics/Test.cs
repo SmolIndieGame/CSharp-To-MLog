@@ -4,17 +4,32 @@ using static MindustryLogics.UnitControl;
 using static MindustryLogics.Operation;
 using static MindustryLogics.Drawing;
 using System.Collections.Generic;
+using System;
 
 [Credit("By SmolIndieGame aka hi*3")]
 class Test
 {
-    [LinkedTo(BuildingType.Duo, 27)]
-    LinkedBuilding mm;
-    [LinkedTo(BuildingType.Message, 1)]
+    //[LinkedTo(BuildingType.Duo, 27)]
+    //LinkedBuilding mm;
+    //[LinkedTo(BuildingType.Message, 1)]
     object yo;
     object ret;
+
+    /*public Test()
+    {
+        gr();
+    }
+
+    private void rr()
+    {
+        Print("yo");
+    }
+
+    void gr() => gr();*/
+
     void Main()
     {
+        //if (hi == null) return;
         // The get icon thingy.
         /*Print("hi\n");
         Print(GetIcon(ItemType.Copper));
@@ -427,11 +442,51 @@ class Test
         }
         var b = GetLink(0);*/
 
-        int a = 1;
+        // linked building test
+        /*int a = 1;
         mm.Config = UnitType.Dagger;
         Print(mm.Ammo);
         mm.Radar(null, SortMethod.MaxHealth, true);
-        _ = mm.Name;
+        _ = mm.Name;*/
+
+
+        //F("adsuf9q4f");
+        //Print("\U001000494324");
+
+        //content type change test
+        /*Print(GetLink(BuildingType.Message, 1));
+        var b = GetLink(0);
+        Print(Sensor(b, InfoType.Ammo));
+        var info = ItemType.Lead;
+        Print(Sensor(b, info));
+
+        UnitBind((UnitType)null);
+        LocateOre(ItemType.Copper, out double x, out double y);
+
+        var ut = UnitType.Retusa;
+        UnitBind(ut);
+        var item = ItemType.None;
+        LocateOre(item, out x, out y);
+
+        ItemTake(b, item, 99);
+        ItemTake(b, ItemType.Titanium, 99);
+        Build(1, 2, BuildingType.Conveyor, 2, b);
+        var bt = BuildingType.Duo;
+        Build(10, 20, bt, 0, null);
+        GetBlock(10, 20, out BuildingType aa, out b);
+        GetBlock(1, 2, out aa, out var bb);*/
+    }
+
+    private object F(string v)
+    {
+        return 89273;
+    }
+
+    int a;
+    int g(ref int a)
+    {
+        a = 0;
+        return a;
     }
 
 

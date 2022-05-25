@@ -23,7 +23,7 @@ namespace Code_Transpiler
 
         public string GetNewTempVar()
         {
-            return $"tmp{++currentTempVarIndex}";
+            return $"$$t{++currentTempVarIndex}";
         }
 
         public void SetValueToVarInCommand(TempValueType type, string index, string value)
