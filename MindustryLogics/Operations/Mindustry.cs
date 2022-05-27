@@ -165,7 +165,7 @@
         /// <param name="index">The index of the linked building. (starts at 1)<br/>Only constant <see cref="int"/> is accepted.</param>
         /// <returns></returns>
         /// <remarks>Only constant values are allowed to pass into this function.</remarks>
-        public static Building GetLink(BuildingType buildingType, int index) => default;
+        public static LinkedBuilding GetLink(BuildingType buildingType, int index) => default;
 
         /// <summary>
         /// <para>

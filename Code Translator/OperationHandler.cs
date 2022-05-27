@@ -90,10 +90,8 @@ namespace Code_Transpiler
                         Handle(op, false, null);
                     return null;
                 case IConversionOperation o:
-                    if (o.Operand.Type.IsTypeEnum() && o.Type.SpecialType != SpecialType.System_Object)
-                        throw CompilerHelper.Error(o.Syntax, CompilationError.CastingEnum);
-                    if (o.Operand.Type.SpecialType != SpecialType.System_Object && o.Type.IsTypeEnum())
-                        throw CompilerHelper.Error(o.Syntax, CompilationError.CastToEnum);
+                    if (o.Type.IsType<LinkedBuilding>())
+                        throw CompilerHelper.Error(o.Syntax, CompilationError.CastingLinkedBuilding);
                     return Handle(o.Operand, canBeInline, returnToVar);
                 case IInstanceReferenceOperation o:
                     if (o.ReferenceKind != InstanceReferenceKind.ContainingTypeInstance)

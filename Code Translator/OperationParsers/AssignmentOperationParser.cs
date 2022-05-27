@@ -16,7 +16,7 @@ namespace Code_Transpiler.OperationParsers
         public override string Parse(IAssignmentOperation operation, bool canBeInline, in string returnToVar)
         {
             if (operation.Target.Type.IsType<LinkedBuilding>())
-                throw CompilerHelper.Error(operation.Value.Syntax, CompilationError.SetLinkedBuilding);
+                throw CompilerHelper.Error(operation.Syntax, CompilationError.SetLinkedBuilding);
 
             string name = handler.Handle(operation.Target, true, null);
             string @return = operation switch

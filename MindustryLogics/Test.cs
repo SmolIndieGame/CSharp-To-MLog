@@ -3,8 +3,6 @@ using static MindustryLogics.Mindustry;
 using static MindustryLogics.UnitControl;
 using static MindustryLogics.Operation;
 using static MindustryLogics.Drawing;
-using System.Collections.Generic;
-using System;
 
 [Credit("By SmolIndieGame aka hi*3")]
 class Test
@@ -14,6 +12,7 @@ class Test
     //[LinkedTo(BuildingType.Message, 1)]
     object yo;
     object ret;
+    LinkedBuilding mm = GetLink(BuildingType.Arc, 2);
 
     /*public Test()
     {
@@ -475,6 +474,8 @@ class Test
         Build(10, 20, bt, 0, null);
         GetBlock(10, 20, out BuildingType aa, out b);
         GetBlock(1, 2, out aa, out var bb);*/
+        Building b = GetLink(10);
+        mm.SetColor(10, 20, 30);
     }
 
     private object F(string v)
@@ -482,7 +483,6 @@ class Test
         return 89273;
     }
 
-    int a;
     int g(ref int a)
     {
         a = 0;

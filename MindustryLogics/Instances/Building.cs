@@ -69,6 +69,15 @@ namespace MindustryLogics
         public abstract void ShootTarget(Entity target, bool shootOrAim);
 
         /// <summary>
+        /// Set the color of the illuminator.<br/>
+        /// Only works if the building is a <see cref="BuildingType.Illuminator"/>.
+        /// </summary>
+        /// <param name="r">The amount of red in the color, 0 is no red, and 255 is full red.</param>
+        /// <param name="g">The amount of green in the color, 0 is no green, and 255 is full green.</param>
+        /// <param name="b">The amount of blue in the color, 0 is no blue, and 255 is full blue.</param>
+        public abstract void SetColor(byte r, byte g, byte b);
+
+        /// <summary>
         /// <para>
         /// Locate units around this building.<br/>
         /// Unable to detect units outside the <see cref="Entity.Range"/> of this building.

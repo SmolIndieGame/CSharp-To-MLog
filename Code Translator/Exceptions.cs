@@ -42,6 +42,10 @@ namespace Code_Transpiler
         PassLinkedBuildingAsRef,
         NoLinkedTo,
         InvalidArgument,
+        EnumValueTooLarge,
+        CastingLinkedBuilding,
+        LinkedBuildingNoInit,
+        ConstLinkedBuilding,
         Unknown,
     }
 
@@ -91,6 +95,10 @@ namespace Code_Transpiler
                 CompilationError.PassLinkedBuildingAsRef => "Linked buildings cannot be passed by reference.",
                 CompilationError.OperationWithEnum => "&, |, ^ operations are not supported on enum that represent types.",
                 CompilationError.InvalidArgument => "This value cannot be passed into the method {0}.",
+                CompilationError.EnumValueTooLarge => "The underlying value of this enum value is too large for Mindustry to handle, please change it to a smaller value.",
+                CompilationError.CastingLinkedBuilding => "Buildings cannot be casted to linked buildings.",
+                CompilationError.LinkedBuildingNoInit => "Initialize the field with GetLink(BuildingType, int).\nExample: LinkedBuilding duo = GetLink(BuildingType.Duo, 1);",
+                CompilationError.ConstLinkedBuilding => "Linked buildings cannot be declared as a constant.",
                 _ => error.ToString(),
             };
         }

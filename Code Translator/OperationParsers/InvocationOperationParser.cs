@@ -76,8 +76,8 @@ namespace Code_Transpiler.OperationParsers
                     IOperation argVal = arg.Value;
                     if (argVal is IDeclarationExpressionOperation deo)
                         argVal = deo.Expression;
-                    if (argVal.Type.IsType<LinkedBuilding>())
-                        throw CompilerHelper.Error(arg.Syntax, CompilationError.PassLinkedBuildingAsRef);
+                    //if (argVal.Type.IsType<LinkedBuilding>())
+                    //    throw CompilerHelper.Error(arg.Syntax, CompilationError.PassLinkedBuildingAsRef);
                     string val = handler.GetVariableName(argVal);
                     if (val != "_")
                         argValue.Add((argName, val));

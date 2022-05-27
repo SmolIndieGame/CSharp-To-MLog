@@ -71,6 +71,7 @@ namespace Code_Transpiler
                 return fullName == typeof(Building).FullName
                     || fullName == typeof(Unit).FullName
                     || fullName == typeof(Entity).FullName
+                    || type.BaseType?.SpecialType == SpecialType.System_Enum
                     || IsTypeEnum(type);
             }
 
@@ -104,6 +105,20 @@ namespace Code_Transpiler
         public string GetValueFromOperation(IOperation operation)
         {
             if (!operation.ConstantValue.HasValue) return null;
+            if (operation.ConstantValue.Value == null) return "null";
+
+            if (operation.Type.BaseType?.SpecialType == SpecialType.System_Enum)
+            {
+                try
+                {
+                    var value = Convert.ToInt64(operation.ConstantValue.Value);
+                    return value.ToString();
+                }
+                catch (OverflowException)
+                {
+                    throw CompilerHelper.Error(operation.Syntax, CompilationError.EnumValueTooLarge);
+                }
+            }
 
             if (operation.Type.SpecialType == SpecialType.None)
             {
@@ -129,14 +144,14 @@ namespace Code_Transpiler
             if (operation.Type.SpecialType == SpecialType.System_Boolean)
                 return (bool)operation.ConstantValue.Value ? "true" : "false";
 
-            if (operation.Type.SpecialType == SpecialType.System_String && operation.ConstantValue.Value != null)
+            if (operation.Type.SpecialType == SpecialType.System_String)
             {
                 string value = operation.ConstantValue.Value.ToString();
                 if (value.Contains('"'))
                     throw Error(operation.Syntax, CompilationError.UnsupportedCharacter, '"');
                 return $"\"{value.Replace("\r", "").Replace("\n", "\\n")}\"";
             }
-            return operation.ConstantValue.Value?.ToString() ?? "null";
+            return operation.ConstantValue.Value.ToString();
         }
 
         public int? GetIntValueFromEnumLiteral(IOperation operation)

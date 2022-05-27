@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Operations;
 using MindustryLogics;
 using System;
 using System.Collections.Generic;
@@ -117,6 +118,7 @@ namespace Code_Transpiler
                 throw CompilerHelper.Error(@class, CompilationError.InheritClasses);
             if (@class.Modifiers.Count > 0)
                 throw CompilerHelper.Error(@class, CompilationError.ClassModifier, className);
+            operationHandler.Reset(className);
 
             AppendCredit(@class);
 
@@ -126,9 +128,7 @@ namespace Code_Transpiler
 
             var ctors = allNodes.OfType<ConstructorDeclarationSyntax>();
             if (ctors.Count() > 1)
-                throw CompilerHelper.Error(@class, CompilationError.TooManyConstructor);
-
-            operationHandler.Reset(className);
+                throw CompilerHelper.Error(ctors.ElementAt(1), CompilationError.TooManyConstructor);
 
             var ctor = ctors.FirstOrDefault();
             if (ctor != null)
@@ -215,14 +215,23 @@ namespace Code_Transpiler
             {
                 if (semanticModel.GetDeclaredSymbol(v) is IFieldSymbol s && s.IsConst)
                     continue;
-                if (v.Initializer != null)
-                    throw CompilerHelper.Error(varDec, CompilationError.FieldInitialized);
+                //if (v.Initializer != null)
+                //    throw CompilerHelper.Error(varDec, CompilationError.FieldInitialized);
+                if (v.Initializer == null)
+                    continue;
+                string name = $"${v.Identifier.Text}";
+                string @return = operationHandler.Handle(semanticModel.GetOperation(v.Initializer.Value), true, name);
+                
+                if (@return == name)
+                    continue;
+
+                output.AppendCommand($"set {name} {@return}");
             }
         }
 
         void HandleLinkedBuildingDeclaration(FieldDeclarationSyntax declaration)
         {
-            string name = null;
+            /*string name = null;
             foreach (var attributeList in declaration.AttributeLists)
                 foreach (var attribute in attributeList.Attributes)
                 {
@@ -256,14 +265,23 @@ namespace Code_Transpiler
                 }
 
             if (name == null)
-                throw CompilerHelper.Error(declaration, CompilationError.NoLinkedTo);
+                throw CompilerHelper.Error(declaration, CompilationError.NoLinkedTo);*/
+
+            if (declaration.Modifiers.Any(SyntaxKind.ConstKeyword))
+                throw CompilerHelper.Error(declaration, CompilationError.ConstLinkedBuilding);
 
             foreach (var v in declaration.Declaration.Variables)
             {
-                if (v.Initializer != null)
-                    throw CompilerHelper.Error(declaration.Declaration, CompilationError.SetLinkedBuilding);
+                if (v.Initializer == null)
+                    throw CompilerHelper.Error(declaration.Declaration, CompilationError.LinkedBuildingNoInit);
 
-                linkedBuildings.Add(v.Identifier.Text, name);
+                IOperation op = semanticModel.GetOperation(v.Initializer.Value);
+                string @return = operationHandler.Handle(op, true, v.Identifier.Text);
+
+                if (@return == v.Identifier.Text || op is not IInvocationOperation || !op.Type.IsType<LinkedBuilding>())
+                    throw CompilerHelper.Error(declaration.Declaration, CompilationError.LinkedBuildingNoInit);
+
+                linkedBuildings.Add(v.Identifier.Text, @return);
             }
         }
 
