@@ -11,8 +11,6 @@ namespace Code_Transpiler
     {
         // TODO: write unit test for all operation parser and operation handler and invocation parser
         // TODO: make tutorial and add doc to readme.md
-        // TODO: add support for custom enum
-        // TODO: clean up code regarding enum and exceptions
 
         // TODO: make condition break, continue, goto and function calls
         // TODO: add support for foreach loop
