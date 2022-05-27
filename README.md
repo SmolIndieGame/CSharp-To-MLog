@@ -1,4 +1,4 @@
-# CSharp To Mindustry Logic ![logo](/cs2ml-icon.png)
+# CSharp To Mindustry Logic
 This is a code transpiler that will transpile C# code to mlog.  
 This transpiler is highly documented.  
 Currently, this is just a console application and only support **windows**.
