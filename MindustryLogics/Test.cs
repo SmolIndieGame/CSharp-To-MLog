@@ -28,7 +28,6 @@ class Test
 
     void Main()
     {
-        //if (hi == null) return;
         // The get icon thingy.
         /*Print("hi\n");
         Print(GetIcon(ItemType.Copper));

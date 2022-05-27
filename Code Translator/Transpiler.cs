@@ -215,8 +215,6 @@ namespace Code_Transpiler
             {
                 if (semanticModel.GetDeclaredSymbol(v) is IFieldSymbol s && s.IsConst)
                     continue;
-                //if (v.Initializer != null)
-                //    throw CompilerHelper.Error(varDec, CompilationError.FieldInitialized);
                 if (v.Initializer == null)
                     continue;
                 string name = $"${v.Identifier.Text}";
@@ -231,42 +229,6 @@ namespace Code_Transpiler
 
         void HandleLinkedBuildingDeclaration(FieldDeclarationSyntax declaration)
         {
-            /*string name = null;
-            foreach (var attributeList in declaration.AttributeLists)
-                foreach (var attribute in attributeList.Attributes)
-                {
-                    if (semanticModel.GetSymbolInfo(attribute).Symbol.ContainingType is not ITypeSymbol s)
-                        throw CompilerHelper.Error(attribute, CompilationError.Unknown);
-                    if (s.IsType<LinkedToAttribute>())
-                    {
-                        string nam = null, idx = null;
-                        foreach (var argument in attribute.ArgumentList.Arguments)
-                        {
-                            var op = semanticModel.GetOperation(argument.Expression);
-                            string value = CompilerHelper.GetValueFromOperation(op);
-                            if (value == null)
-                                throw CompilerHelper.Error(argument, CompilationError.NotConstantValue);
-                            if (op.Type.IsType<BuildingType>())
-                            {
-                                if (value == "null")
-                                    throw CompilerHelper.Error(op.Syntax, CompilationError.NoneEnumLiteral);
-                                nam = value.Substring(Math.Max(1, value.LastIndexOf('-') + 1));
-                            }
-                            else
-                            {
-                                if (int.Parse(value) < 1)
-                                    throw CompilerHelper.Error(op.Syntax, CompilationError.InvalidLinkIndex);
-                                idx = value;
-                            }
-                        }
-
-                        name = nam + idx;
-                    }
-                }
-
-            if (name == null)
-                throw CompilerHelper.Error(declaration, CompilationError.NoLinkedTo);*/
-
             if (declaration.Modifiers.Any(SyntaxKind.ConstKeyword))
                 throw CompilerHelper.Error(declaration, CompilationError.ConstLinkedBuilding);
 

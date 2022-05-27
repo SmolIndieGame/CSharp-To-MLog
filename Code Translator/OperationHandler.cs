@@ -142,13 +142,6 @@ namespace Code_Transpiler
                     throw CompilerHelper.Error(rightOperand.Parent.Syntax, CompilationError.StringAddition);
             }
 
-            if (leftOperand.Type.IsTypeEnum()
-                && (operatorKind == BinaryOperatorKind.Subtract
-                || operatorKind == BinaryOperatorKind.And
-                || operatorKind == BinaryOperatorKind.Or
-                || operatorKind == BinaryOperatorKind.ExclusiveOr))
-                throw CompilerHelper.Error(leftOperand.Parent.Syntax, CompilationError.OperationWithEnum);
-
             builder.Append(' ');
             builder.Append(GetOperatorString(operatorKind, leftOperand, rightOperand));
             builder.Append(' ');
