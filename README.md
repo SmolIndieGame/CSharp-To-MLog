@@ -1,7 +1,7 @@
 # CSharp To Mindustry Logic
 This is a code transpiler that will transpile C# code to mlog.  
 This transpiler is highly documented.  
-[here](https://smolindiegame.github.io/CSharp-To-Mlog-Doc/index.html) is the documentation.  
+[Here](https://smolindiegame.github.io/CSharp-To-Mlog-Doc/index.html) is the documentation.  
 Currently, this is just a console application and only support **windows**.
 ## How to install
 You will need an IDE that can open `.csproj` for auto-completion.  
