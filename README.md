@@ -8,7 +8,7 @@ If you do not have one, I recommand visual studio,
 It can be downloaded [here](https://visualstudio.microsoft.com).
 
 Goto [release](https://github.com/SmolIndieGame/CSharp-To-MLog/releases), download the latest version  
-Open `Code Translator.lnk` and select the code you want to transpile.
+Open `Code Transpiler.lnk` and select the code you want to transpile.
 
 [here] is a video tutorial.
 ## Features
