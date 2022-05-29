@@ -4,9 +4,11 @@ using static MindustryLogics.UnitControl;
 using static MindustryLogics.Operation;
 using static MindustryLogics.Drawing;
 
+[Credit("Author: <yourname>")]
 class Template
 {
     // This is the constructor, it will be executed first, and will run only once.
+    // The constructor must have the same name as its containing class.
     Template()
     {
 
