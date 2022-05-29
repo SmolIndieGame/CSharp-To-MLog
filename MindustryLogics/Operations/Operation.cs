@@ -178,10 +178,10 @@
         /// The angle is in degrees.
         /// <list type="bullet">
         /// <listheader>It is a real number in range [0, 360).</listheader>
-        /// <item><term>0</term> <description>faces right</description></item>
-        /// <item><term>90</term> <description>faces up</description></item>
-        /// <item><term>180</term> <description>faces left</description></item>
-        /// <item><term>270</term> <description>faces down</description></item>
+        /// <item><term><b>0</b> </term> <description>faces right</description></item>
+        /// <item><term><b>90</b> </term> <description>faces up</description></item>
+        /// <item><term><b>180</b> </term> <description>faces left</description></item>
+        /// <item><term><b>270</b> </term> <description>faces down</description></item>
         /// </list>
         /// </summary>
         /// <param name="a"></param>

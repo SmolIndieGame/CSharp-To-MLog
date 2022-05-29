@@ -101,18 +101,18 @@
         /// The roataion of the entity.<br/>
         /// <b>For buildings that have directions:</b>
         /// <list type="bullet">
-        /// <item><term>0</term> <description>faces right</description></item>
-        /// <item><term>1</term> <description>faces up</description></item>
-        /// <item><term>2</term> <description>faces left</description></item>
-        /// <item><term>3</term> <description>faces down</description></item>
+        /// <item><term><b>0</b> </term> <description>faces right</description></item>
+        /// <item><term><b>1</b> </term> <description>faces up</description></item>
+        /// <item><term><b>2</b> </term> <description>faces left</description></item>
+        /// <item><term><b>3</b> </term> <description>faces down</description></item>
         /// </list>
         /// <b>For turrets and units:</b>
         /// <list type="bullet">
         /// <listheader>It is an angle range from 0 to 360.</listheader>
-        /// <item><term>0</term> <description>faces right</description></item>
-        /// <item><term>90</term> <description>faces up</description></item>
-        /// <item><term>180</term> <description>faces left</description></item>
-        /// <item><term>270</term> <description>faces down</description></item>
+        /// <item><term><b>0</b> </term> <description>faces right</description></item>
+        /// <item><term><b>90</b> </term> <description>faces up</description></item>
+        /// <item><term><b>180</b> </term> <description>faces left</description></item>
+        /// <item><term><b>270</b> </term> <description>faces down</description></item>
         /// </list>
         /// </summary>
         public static InfoType Rotation => default;

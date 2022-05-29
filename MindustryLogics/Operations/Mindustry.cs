@@ -20,9 +20,9 @@
         /// <summary>
         /// The number of instructions executed per tick (60 ticks/second).
         /// <list type="bullet">
-        /// <item><term>Micro Processor</term> <description>2</description></item>
-        /// <item><term>Logic Processor</term> <description>8</description></item>
-        /// <item><term>Hyper Processor</term> <description>25</description></item>
+        /// <item><term><b>Micro Processor</b> </term> <description>2</description></item>
+        /// <item><term><b>Logic Processor</b> </term> <description>8</description></item>
+        /// <item><term><b>Hyper Processor</b> </term> <description>25</description></item>
         /// </list>
         /// </summary>
         public static double IPT { get; }
@@ -237,18 +237,18 @@
         /// <para>
         /// <b>To control buildings:</b><br/>
         /// <list type="bullet">
-        /// <item><term>enabled</term> <description><see cref="Building.Enabled"/></description></item>
-        /// <item><term>shoot</term> <description><see cref="Building.Shoot(double, double, bool)"/></description></item>
-        /// <item><term>shootp</term> <description><see cref="Building.ShootTarget(Entity, bool)"/></description></item>
-        /// <item><term>config</term> <description><see cref="Building.Config"/></description></item>
-        /// <item><term>configure</term> <description><see cref="Building.Configure"/></description></item>
-        /// <item><term>color</term> <description>unsupported</description></item>
+        /// <item><term><b>enabled</b> </term> <description><see cref="Building.Enabled"/></description></item>
+        /// <item><term><b>shoot</b> </term> <description><see cref="Building.Shoot(double, double, bool)"/></description></item>
+        /// <item><term><b>shootp</b> </term> <description><see cref="Building.ShootTarget(Entity, bool)"/></description></item>
+        /// <item><term><b>config</b> </term> <description><see cref="Building.Config"/></description></item>
+        /// <item><term><b>configure</b> </term> <description><see cref="Building.Configure"/></description></item>
+        /// <item><term><b>color</b> </term> <description>unsupported</description></item>
         /// </list>
         /// </para>
         /// <para>
         /// <b>To control units:</b><br/>
         /// <list type="bullet">
-        /// <item>Use methods inside <see cref="MindustryLogics.UnitControl"/>.</item>
+        /// <item><description>Use methods inside <see cref="MindustryLogics.UnitControl"/>.</description></item>
         /// </list>
         /// </para>
         /// </summary>

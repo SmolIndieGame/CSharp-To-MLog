@@ -9,13 +9,12 @@ namespace Code_Transpiler
 {
     internal class Program
     {
-        // TODO: write unit test for all operation parser and operation handler and invocation parser
-        // TODO: make tutorial and add doc to readme.md
-
         // TODO: make condition break, continue, goto and function calls
         // TODO: add support for foreach loop
         // TODO: add cellArray and cellStack
         // TODO: add support for switch statement
+        // TODO: add more doc
+        // TODO: support modding
 
         [STAThread]
         static void Main(string[] args)
@@ -117,23 +116,6 @@ namespace Code_Transpiler
             }
             Console.Write(builder);
         }
-
-        /*private static string GetFile(string initPath)
-        {
-            using OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.InitialDirectory = initPath;
-            openFileDialog.Filter = "C# Source File (*.cs)|*.cs";
-            openFileDialog.RestoreDirectory = true;
-
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                var fileStream = openFileDialog.OpenFile();
-                using StreamReader reader = new StreamReader(fileStream);
-                return reader.ReadToEnd();
-            }
-
-            throw new OperationCanceledException();
-        }*/
 
         public static bool SelectFile(string directoryPath, out string file)
         {

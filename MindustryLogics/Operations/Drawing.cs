@@ -1,22 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MindustryLogics
+﻿namespace MindustryLogics
 {
     /// <summary>
     /// <para>This class contains all drawing operations.</para>
     /// <para>
     /// <b>Coordinate inside displays:</b>
     /// <list type="bullet">
-    /// <item>The size of a Logic Display is 80x80.</item>
-    /// <item>(x = 0, y = 0) is the bottom left corner.</item>
-    /// <item>(x = 80, y = 80) is the upper right corner.</item>
-    /// <item>The size of a Large Logic Display is 176x176.</item>
-    /// <item>(x = 0, y = 0) is the bottom left corner.</item>
-    /// <item>(x = 176, y = 176) is the upper right corner.</item>
+    /// <item><description>The size of a Logic Display is 80x80.</description></item>
+    /// <item><description>(x = 0, y = 0) is the bottom left corner.</description></item>
+    /// <item><description>(x = 80, y = 80) is the upper right corner.</description></item>
+    /// <item><description>The size of a Large Logic Display is 176x176.</description></item>
+    /// <item><description>(x = 0, y = 0) is the bottom left corner.</description></item>
+    /// <item><description>(x = 176, y = 176) is the upper right corner.</description></item>
     /// </list>
     /// </para>
     /// </summary>

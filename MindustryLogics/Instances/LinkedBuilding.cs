@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MindustryLogics
+﻿namespace MindustryLogics
 {
     /// <summary>
     /// An instance of a building that is linked to the processor by name.<br/>
@@ -12,8 +6,7 @@ namespace MindustryLogics
     /// everytime you wanted to get a linked building by its name.
     /// <para>Example declaration:<br/>
     /// <c>
-    /// [<see cref="LinkedToAttribute"/>(<see cref="BuildingType.Duo"/>, 27)]<br/>
-    /// <see langword="private"/> <see cref="LinkedBuilding"/> turret;<br/>
+    /// <see langword="private"/> <see cref="LinkedBuilding"/> turret = GetLink(<see cref="BuildingType.Duo"/>, 27);<br/>
     /// </c>
     /// Everytime the field turret is referenced, it will transpile to duo27.
     /// </para>
