@@ -11,7 +11,7 @@ It can be downloaded [here](https://visualstudio.microsoft.com).
 Goto [release](https://github.com/SmolIndieGame/CSharp-To-MLog/releases), download the latest version  
 Open `Code Transpiler.lnk` and select the code you want to transpile.
 
-[here](https://www.youtube.com/watch?v=yCHuV9DJST0) is a video tutorial.
+[Here](https://www.youtube.com/watch?v=yCHuV9DJST0) is a video tutorial.
 ## Features
 This transpiler support the below CSharp features:
 * Fields.
